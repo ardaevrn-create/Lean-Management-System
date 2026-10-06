@@ -17,6 +17,7 @@ import { TenantProvisioningService } from '../src/core/tenants/tenant-provisioni
 import { UsersService } from '../src/core/users/users.service';
 import { hashPassword } from '../src/core/auth/auth.service';
 import { seedMeetings } from './seed-meetings';
+import { seedKpis } from './seed-kpi';
 
 const DEMO_PASSWORD = 'Demo1234!';
 
@@ -110,6 +111,8 @@ async function main() {
     await actions.create({ title: '5S etiketlerinin yenilenmesi', ownerId: byNo['3002'], dueDate: day(7), priority: 'LOW' });
 
     await seedMeetings(app, { byNo, units: { fabrika: fabrika.id, uretim: uretim.id, hat1: hat1.id, kalite: kalite.id } });
+    // KPI demo verisi (tanım, hedef, değer, sapma + aksiyon, bilerek eksik girişler)
+    await seedKpis(app, { byNo, units: { hat1: hat1.id, hat2: hat2.id, kalite: kalite.id }, day });
   });
 
   console.log('Seed tamamlandı.');

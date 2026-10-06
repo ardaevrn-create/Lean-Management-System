@@ -124,3 +124,63 @@ Yetki: `meeting.view` / `meeting.manage` (birim kapsamlı). Organizatör, katıl
 | PATCH | `/meetings/series/:seriesId` | `{ action: "CANCEL", reason? }` | `{ cancelled }` — serideki gelecekteki planlı toplantılar iptal edilir |
 
 Pano kartı: `GET /dashboard/me` → `widgets.meetings = { upcoming[5], todayCount, minutesPending }`. Zamanlanmış iş: her gün 07:15 (Europe/Istanbul) bugünkü toplantı hatırlatmaları ve dün biten, tutanağı tamamlanmamış toplantılar için organizatör uyarısı.
+## KPI (M8)
+
+Önek `/api/v1/kpi`. Dönem anahtarları: `YYYY-MM-DD` (günlük), `YYYY-Www` (haftalık, ISO), `YYYY-MM`, `YYYY-Qn`, `YYYY`. Okuma uç noktalarında kapsam: `kpi.view` (birim kapsamı) + kullanıcının sahibi / veri giriş sorumlusu olduğu KPI'lar (kpi.view olmasa da). Değer girişi: veri giriş sorumlusu, sahip veya `kpi.value.enter` (kapsamda). Tanım/hedef yönetimi: `kpi.manage` (kapsamda). Sapma onayı: `kpi.deviation.approve` (kapsamda) ya da KPI sahibinin yöneticisi. Tüm değişiklikler denetim izine yazılır. İş kuralı hataları `422` + `code` (`REASON_REQUIRED`, `CALCULATED_KPI`, `FUTURE_PERIOD`, `INVALID_PERIOD`, `INVALID_FORMULA`, `CODE_TAKEN`, `FREQUENCY_LOCKED`, `DEVIATION_NOT_REQUIRED`, `ACTION_REQUIRED`, `NOTE_REQUIRED`, `ALREADY_DECIDED`).
+
+**Durum kuralı:** tolerans = |hedef| × `warningTolerancePct`/100. `HIGHER_BETTER`: değer ≥ hedef → GREEN, ≥ hedef − tol → YELLOW, aksi RED. `LOWER_BETTER` tersi. `RANGE`: hedef ≤ değer ≤ hedefMax → GREEN, bandın dışında tolerans içinde YELLOW, aksi RED. Hedef yoksa `NO_TARGET`.
+**Giriş durumu (`entryState`, hesaplanır):** `NOT_DUE` (değer yok, son giriş tarihi = dönem sonu + `entryDueDays` geçmedi) · `MISSING` · `DEVIATION_REQUIRED` (sarı: açıklama; kırmızı: açıklama + en az 1 aksiyon; reddedilen açıklama tekrar gerekli) · `PENDING_APPROVAL` · `COMPLETE`.
+
+### Tanım ve hedefler
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/kpi/definitions` | `q, orgUnitId (alt birimler dahil), category, frequency, ownerId, mine=true, isActive, page, pageSize, sort` | `Paginated<KpiListItem>` (son durum özeti: `duePeriod, entryState, lastPeriod, lastValue, lastTarget, lastStatus, missingCount, deviationRequiredCount`) |
+| GET | `/kpi/definitions/:id` | | `KpiDefinitionDetail` |
+| POST | `/kpi/definitions` | `KpiDefinitionRequest` (formül: `({A} / {B}) * 100`; referanslar aynı periyotta, döngüsüz) | `KpiDefinitionDetail` |
+| PATCH | `/kpi/definitions/:id` | kısmi (kod değişmez; değer/hedef varken `frequency` değişmez) | `KpiDefinitionDetail` |
+| DELETE | `/kpi/definitions/:id` | | `204` (pasife alır, geçmiş korunur) |
+| GET | `/kpi/definitions/:id/targets` | `from, to` (dönem; varsayılan: bu yıl) | `KpiTargetItem[]` |
+| PUT | `/kpi/definitions/:id/targets` | `{ targets: [{ period, target, targetMax? }] }` (`target: null` siler; ≤400) | `KpiTargetItem[]` (değerlerin durumu yeniden hesaplanır) |
+
+### Değerler ve veri girişi
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/kpi/definitions/:id/series` | `from, to` (dönem; varsayılan son 12) | `KpiSeries` (nokta başına hedef/değer/durum/giriş durumu/sapma/aksiyon sayısı/önceki yıl; `ytd` ve `previousYearYtd` KPI'nın `aggregation` kuralıyla) |
+| GET | `/kpi/definitions/:id/revisions` | `period?` | `KpiRevisionItem[]` |
+| PUT | `/kpi/values` | `{ kpiId, period, value, note?, reason? }` — mevcut değer değişiyorsa `reason` zorunlu | `KpiValueResult` (`status, entryState, requiresExplanation, requiresAction`) |
+| POST | `/kpi/values/bulk` | `{ items: [{ kpiCode\|kpiId, period, value, note? }], reason? }` — entegrasyon (API anahtarı, `kpi.value.enter`) | `BulkKpiValuesResult` (satır bazlı, kısmi başarı) |
+| GET | `/kpi/entry` | `period?` (referans; her KPI için bu referansta biten son dönem), `frequency?` | `KpiEntryResponse` (sıklığa göre gruplu çalışma listesi; varsayılan: son tamamlanan dönem) |
+
+Hesaplanan (formüllü) KPI'lara manuel giriş yapılamaz (`CALCULATED_KPI`); girdileri değişince değerleri otomatik üretilir (`source=CALCULATED`).
+
+### Eksik veri ve uyum (M8-06)
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/kpi/missing` | `orgUnitId?, from?, to?` (son giriş tarihi aralığı, `YYYY-MM-DD`) | `{ total, items: [{ kpi, period, dueDate, daysLate, responsible, orgUnit }] }` (KPI başına son 12 dönem) |
+| GET | `/kpi/missing/export` | aynı | `.xlsx` |
+| GET | `/kpi/compliance` | aynı | `{ overall, byOrgUnit[], byPerson[] }` — beklenen / zamanında / geç / eksik / uyum % / tamamlanma % |
+| GET | `/kpi/compliance/export` | `by=orgUnit\|person` | `.xlsx` |
+| GET | `/kpi/summary` | | `{ missing, deviationRequired, pendingApproval, kpiCount, complianceRate }` |
+
+### Sapmalar (M8-08/09)
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/kpi/deviations` | `state=required\|pending\|all, orgUnitId?` | `KpiDeviationListItem[]` |
+| GET | `/kpi/deviations/detail` | `kpiId, period` | `KpiDeviationDetail` (kayıt yoksa da döner) |
+| GET | `/kpi/deviations/:id` | | `KpiDeviationDetail` (bağlı aksiyonlar + geçmiş) |
+| PUT | `/kpi/deviations` | `{ kpiId, period, explanation, rootCause? }` (REJECTED → PENDING'e döner) | `KpiDeviationDetail` |
+| POST | `/kpi/deviations/:id/actions` | `CreateActionRequest` (kaynak alanları hariç) — `ActionsService.create`, `sourceType=KPI_DEVIATION` | `ActionDetail` |
+| POST | `/kpi/deviations/:id/decide` | `{ approve, note? }` (reddetmede `note` zorunlu; kırmızıda aksiyon yoksa onay `ACTION_REQUIRED`) | `KpiDeviationDetail` |
+
+### Pano ve besleme (M8-13, I-04)
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/kpi/board` | `orgUnitId?, period?, includeSub=true` | `KpiBoardResponse` (KPI başına güncel durum + son 6 dönem sparkline) |
+| GET | `/kpi/feed` | `from?, to?, orgUnitId?` (`YYYY-MM-DD`; varsayılan geçen yıl başı → bugün) — `x-api-key` + `kpi.view` | `KpiFeedRow[]` düz tablo (Power BI / Excel "Web" bağlayıcısı) |
+| GET | `/kpi/feed/export` | aynı | `.xlsx` |
+
+### Excel içe aktarma tipleri
+`kpi-definitions` (koda göre ekler/günceller; "Yüksek iyi", "Düşük iyi", "Aralık", "Aylık", "Haftalık"… Türkçe karşılıklar kabul edilir), `kpi-targets`, `kpi-values` (mevcut değerin üzerine yazılırsa revizyon: "Excel içe aktarma"). Dönem hücresi bir tarih de olabilir (ör. `01.10.2026`) — KPI periyoduna çevrilir.
+
+### Zamanlanmış iş ve kartlar
+Her gün 07:30 (Europe/Istanbul): eksik giriş → veri giriş sorumlusuna `KPI_VALUE_MISSING` (3 gün gecikmede birim yöneticisine bir kez eskalasyon); açıklaması gereken sapma → KPI sahibine `KPI_DEVIATION_REQUIRED`. Ana sayfa kartı: `GET /dashboard/me` → `widgets.kpi = { toEnter, missing, deviationsRequired, pendingApprovals? }`.

@@ -36,7 +36,8 @@ export const NAV: NavGroup[] = [
     items: [
       { href: "/", labelKey: "nav.home", icon: Home },
       { href: "/actions", labelKey: "nav.actions", icon: ListChecks },
-      { href: "/kpi", labelKey: "nav.kpi", icon: Gauge, permission: "kpi.view" },
+      // KPI: veri giriş sorumluları kpi.view olmadan da kendi KPI'larını görür; veri kapsamı API'da uygulanır
+      { href: "/kpi", labelKey: "nav.kpi", icon: Gauge },
       { href: "/meetings", labelKey: "nav.meetings", icon: CalendarDays, permission: "meeting.view" },
       { href: "/hoshin", labelKey: "nav.hoshin", icon: Target, permission: "hoshin.view" },
       { href: "/problems", labelKey: "nav.problems", icon: Puzzle, permission: "problem.view" },
