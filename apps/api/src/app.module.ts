@@ -13,6 +13,7 @@ import { TenantsModule } from './core/tenants/tenants.module';
 import { UsersModule } from './core/users/users.module';
 import { MeetingsModule } from './modules/meetings/meetings.module';
 import { KpiModule } from './modules/kpi/kpi.module';
+import { StrategyModule } from './modules/strategy/strategy.module';
 
 @Controller('health')
 class HealthController {
@@ -39,6 +40,7 @@ class HealthController {
     MeetingsModule,
     // İş modülleri
     KpiModule,
+    StrategyModule,
   ],
   controllers: [HealthController],
 })

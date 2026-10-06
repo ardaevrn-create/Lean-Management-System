@@ -8,14 +8,16 @@ import kpiTr from "@/messages/modules/kpi.tr.json";
 import kpiEn from "@/messages/modules/kpi.en.json";
 import meetingsTr from "@/messages/modules/meetings.tr.json";
 import meetingsEn from "@/messages/modules/meetings.en.json";
+import strategyTr from "@/messages/modules/strategy.tr.json";
+import strategyEn from "@/messages/modules/strategy.en.json";
 
 export type Locale = "tr" | "en";
 const LOCALE_KEY = "lean.locale";
 
 type Messages = Record<string, unknown>;
 const catalogs: Record<Locale, Messages> = {
-  tr: { ...tr, kpiModule: kpiTr, meetingsModule: meetingsTr },
-  en: { ...en, kpiModule: kpiEn, meetingsModule: meetingsEn },
+  tr: { ...tr, kpiModule: kpiTr, meetingsModule: meetingsTr, strategyModule: strategyTr },
+  en: { ...en, kpiModule: kpiEn, meetingsModule: meetingsEn, strategyModule: strategyEn },
 };
 
 function lookup(messages: Messages, key: string): string | undefined {

@@ -70,6 +70,14 @@ model User {
   kpiDeviationsDecided    KpiDeviation[]       @relation("KpiDeviationDecidedBy")
   kpiDeviationsCreated    KpiDeviation[]       @relation("KpiDeviationCreatedBy")
 
+  // Strategy & Hoshin
+  strategyPlansApproved    StrategyPlan[]         @relation("StrategyPlanApprovedBy")
+  strategyPlansCreated     StrategyPlan[]         @relation("StrategyPlanCreatedBy")
+  strategicObjectivesOwned StrategicObjective[]   @relation("StrategicObjectiveOwner")
+  hoshinGoalsOwned         HoshinGoal[]           @relation("HoshinGoalOwner")
+  hoshinGoalsCreated       HoshinGoal[]           @relation("HoshinGoalCreatedBy")
+  hoshinCatchballEntries   HoshinCatchballEntry[] @relation("HoshinCatchballUser")
+
   @@unique([tenantId, username])
   @@index([tenantId])
 }
@@ -126,6 +134,9 @@ model OrgUnit {
   // Meetings
   meetingTypes MeetingType[]
   meetings     Meeting[]
+
+  // Strategy & Hoshin
+  hoshinGoals HoshinGoal[] @relation("HoshinGoalOrgUnit")
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])
