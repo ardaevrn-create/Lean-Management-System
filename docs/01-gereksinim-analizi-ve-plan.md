@@ -1,7 +1,36 @@
 # Yalın Yönetim & Kalite Yönetim Platformu — Gereksinim Analizi ve Proje Planı
 
-> Durum: **Taslak v0.1** — Kodlamaya başlamadan önce onaylanması gereken planlama dokümanı.
+> Durum: **v1.0 — Onaylandı** (müşteri cevaplarına göre güncellendi, bkz. §0). Teknik tasarım: `02-teknik-tasarim.md`.
 > Hedef: Önce web tabanlı uygulama, ardından mobil entegrasyon.
+
+---
+
+## 0. Alınan Kararlar (v1.0)
+
+| # | Konu | Karar |
+|---|------|-------|
+| K1 | Kullanım modeli | **Çok şirketli SaaS ürün** (multi-tenant). Her şirketin verisi izole. |
+| K2 | Barındırma | **Bulut**. |
+| K3 | Kullanıcı sayısı | Sınır yok. **Saha çalışanlarına da hesap açılır**; öneri verir, kendi aksiyonlarını takip eder. E-postası olmayan kullanıcı için giriş: *şirket kodu + kullanıcı adı/sicil no + şifre*. |
+| K4 | Problem çözme | **Balık kılçığı (Ishikawa) ve 5 Neden zorunlu** adımlar. 8D zorunlu değil (opsiyonel format, sonraki faz). |
+| K5 | KPI verisi | Büyük oranda **elle giriş**; otomasyona açık mimari. **Excel sürükle-bırak içe aktarım**, Power BI / Excel / Power Automate ile **API üzerinden veri alışverişi**. |
+| K6 | 5S / TPM / öneri formları | Standart şablonları biz tasarlarız; şirket kendi şablonunu uyarlayabilir. |
+| K7 | Teknoloji ve faz sırası | Önerilen yığın ve faz sırası onaylandı. |
+
+### 0.1 Kararlardan doğan yeni / değişen gereksinimler
+
+| Kod | Gereksinim | Öncelik |
+|-----|-----------|---------|
+| I-01 | **Excel sürükle-bırak içe aktarma sihirbazı**: dosyayı bırak → önizleme → kolon eşleştirme → doğrulama (hatalı satırlar işaretli) → onayla. Personel, organizasyon, KPI tanımı, KPI değeri, aksiyon için. | Z |
+| I-02 | Her içe aktarma için **hazır Excel şablonu indirme** | Z |
+| I-03 | **API anahtarı** (şirket bazlı, yetki kapsamlı) ile dış sistemlerden veri yazma (ör. Power Automate, ERP script'i KPI değeri gönderir) | Ö |
+| I-04 | **Power BI / Excel için okuma uç noktaları** (düz tablo formatında KPI, aksiyon, öneri, denetim verisi; API anahtarı ile "Web" bağlayıcısından çekilebilir) | Ö |
+| I-05 | Tüm listelerde Excel dışa aktarım | Z |
+| I-06 | Planlı içe aktarma (paylaşılan klasör / OneDrive Excel'inden periyodik veri çekme) | İ |
+| M1-05 (güncel) | Her personel kullanıcı hesabına sahip olabilir; e-posta zorunlu değil. Toplu hesap açma, ilk girişte şifre değiştirme, yönetici tarafından şifre sıfırlama. | Z |
+| M5-02 (güncel) | Problem çözme akışı: Tanım (5N1K) → Acil önlem → **Balık kılçığı (zorunlu)** → **5 Neden (zorunlu, en az bir kök nedene ulaşmalı)** → Düzeltici/önleyici aksiyonlar → Etkinlik doğrulama → Kapanış. 8D/A3 rapor görünümü opsiyonel. | Z |
+| SaaS-01 | Şirket (tenant) kaydı, şirket kodu, abonelik/lisans durumu, platform yönetim paneli | Z |
+| SaaS-02 | Şirket bazlı marka ayarları (logo, renk) | Ö |
 
 ---
 
@@ -325,7 +354,7 @@ Her faz sonunda çalışan, kullanılabilir bir ürün çıkması hedeflenir.
 
 ---
 
-## 9. Netleştirilmesi Gereken Sorular
+## 9. Netleştirilmesi Gereken Sorular (cevaplandı — bkz. §0)
 
 1. **Kullanım modeli**: Tek bir şirket (kendi şirketiniz) mi kullanacak, yoksa birden çok şirkete satılacak bir **SaaS ürün** mü?
 2. **Barındırma**: Bulut (SaaS) mu, müşteri sunucusu (on-prem) mu, ikisi de mi?
