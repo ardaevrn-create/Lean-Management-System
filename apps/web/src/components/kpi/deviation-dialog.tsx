@@ -110,7 +110,25 @@ export function DeviationDialog({ kpiId, period, open, onClose }: { kpiId: strin
           {data && <EntryStateBadge state={data.entryState} />}
         </span>
       }
-      footer={<Button variant="outline" onClick={onClose}>{t("common.close")}</Button>}
+      footer={
+        <>
+          {data && (
+            <Link
+              href={`/problems?${new URLSearchParams({
+                new: "1",
+                source: "KPI_DEVIATION",
+                sourceId: data.deviation?.id ?? `${data.kpi.id}:${data.period}`,
+                sourceLabel: `KPI ${data.kpi.code} ${data.period}: ${data.kpi.name}`,
+                orgUnitId: data.kpi.orgUnit.id,
+              })}`}
+              className="inline-flex h-9 items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              {t("kpiModule.deviation.openProblem")}
+            </Link>
+          )}
+          <Button variant="outline" onClick={onClose}>{t("common.close")}</Button>
+        </>
+      }
     >
       {isLoading || !data ? (
         <LoadingBlock />

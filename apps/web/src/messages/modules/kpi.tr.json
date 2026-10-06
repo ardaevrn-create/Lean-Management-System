@@ -223,7 +223,8 @@
     "reject": "Reddet",
     "approved": "Açıklama onaylandı.",
     "rejected": "Açıklama reddedildi.",
-    "approveBlocked": "Onay için gerekli açıklama ve aksiyonlar tamamlanmalı."
+    "approveBlocked": "Onay için gerekli açıklama ve aksiyonlar tamamlanmalı.",
+    "openProblem": "Problem aç (DÖF)"
   },
   "board": {
     "includeSub": "Alt birimler dahil",

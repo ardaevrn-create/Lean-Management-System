@@ -223,7 +223,8 @@
     "reject": "Reject",
     "approved": "Explanation approved.",
     "rejected": "Explanation rejected.",
-    "approveBlocked": "The required explanation and actions must be complete before approval."
+    "approveBlocked": "The required explanation and actions must be complete before approval.",
+    "openProblem": "Open problem (CAPA)"
   },
   "board": {
     "includeSub": "Include sub-units",
