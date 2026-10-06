@@ -84,6 +84,14 @@ model User {
   hoshinGoalsCreated       HoshinGoal[]           @relation("HoshinGoalCreatedBy")
   hoshinCatchballEntries   HoshinCatchballEntry[] @relation("HoshinCatchballUser")
 
+  // Audits
+  auditAreasResponsible AuditArea[]        @relation("AuditAreaResponsible")
+  auditPlansFixed       AuditPlan[]        @relation("AuditPlanFixedAuditor")
+  auditPlanAuditors     AuditPlanAuditor[] @relation("AuditPlanAuditorUser")
+  auditsPerformed       Audit[]            @relation("AuditAuditor")
+  tagsOpened            AbnormalityTag[]   @relation("TagOpenedBy")
+  tagsAssigned          AbnormalityTag[]   @relation("TagAssignedTo")
+
   @@unique([tenantId, username])
   @@index([tenantId])
 }
@@ -136,6 +144,10 @@ model OrgUnit {
   actions   Action[]
   // KPI
   kpis      KpiDefinition[]
+
+  // Audits
+  auditAreas     AuditArea[] @relation("AuditAreaOrgUnit")
+  auditEquipment Equipment[] @relation("EquipmentOrgUnit")
 
   // Meetings
   meetingTypes MeetingType[]

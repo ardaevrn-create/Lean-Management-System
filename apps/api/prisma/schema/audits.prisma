@@ -1,0 +1,310 @@
+// ---------- 5S & TPM Denetimleri (M6) ----------
+
+enum AuditTemplateType {
+  FIVE_S
+  TPM_AUTONOMOUS
+  TPM_EQUIPMENT
+  SAFETY
+  LAYERED
+  CUSTOM
+}
+
+enum AuditAreaType {
+  PRODUCTION
+  OFFICE
+  WAREHOUSE
+  ANY
+}
+
+enum AuditScaleType {
+  ZERO_TO_FOUR
+  ZERO_TO_FIVE
+  YES_NO
+}
+
+enum AuditPlanFrequency {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+}
+
+enum AuditorAssignMode {
+  FIXED
+  ROTATION
+}
+
+enum AuditStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EquipmentCriticality {
+  A
+  B
+  C
+}
+
+enum TagColor {
+  RED
+  BLUE
+}
+
+enum TagCategory {
+  LEAK
+  LOOSENESS
+  CONTAMINATION
+  DAMAGE
+  SAFETY
+  MISSING_PART
+  OTHER
+}
+
+enum TagStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+  CANCELLED
+}
+
+model AuditTemplate {
+  id          String            @id @default(cuid())
+  tenantId    String
+  name        String
+  /// Aynı kodlu satırlar aynı şablonun sürümleridir
+  code        String
+  type        AuditTemplateType @default(FIVE_S)
+  areaType    AuditAreaType     @default(ANY)
+  scaleType   AuditScaleType    @default(ZERO_TO_FOUR)
+  version     Int               @default(1)
+  isActive    Boolean           @default(true)
+  description String?
+  builtinKey  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  sections AuditTemplateSection[]
+  plans    AuditPlan[]
+  audits   Audit[]
+
+  @@unique([tenantId, code, version])
+  @@index([tenantId])
+}
+
+model AuditTemplateSection {
+  id         String @id @default(cuid())
+  tenantId   String
+  templateId String
+  title      String
+  sortOrder  Int    @default(0)
+  weight     Float  @default(1)
+
+  template  AuditTemplate           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questions AuditTemplateQuestion[]
+
+  @@index([tenantId, templateId])
+}
+
+model AuditTemplateQuestion {
+  id                 String  @id @default(cuid())
+  tenantId           String
+  sectionId          String
+  text               String
+  guidance           String?
+  weight             Float   @default(1)
+  sortOrder          Int     @default(0)
+  /// Puan bu eşiğin altındaysa fotoğraf zorunlu
+  photoRequiredBelow Int?
+
+  section AuditTemplateSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, sectionId])
+}
+
+model AuditArea {
+  id            String        @id @default(cuid())
+  tenantId      String
+  code          String
+  name          String
+  orgUnitId     String
+  responsibleId String?
+  areaType      AuditAreaType @default(PRODUCTION)
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  orgUnit     OrgUnit          @relation("AuditAreaOrgUnit", fields: [orgUnitId], references: [id])
+  responsible User?            @relation("AuditAreaResponsible", fields: [responsibleId], references: [id])
+  equipment   Equipment[]
+  planAreas   AuditPlanArea[]
+  audits      Audit[]
+  tags        AbnormalityTag[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model Equipment {
+  id          String               @id @default(cuid())
+  tenantId    String
+  code        String
+  name        String
+  areaId      String
+  orgUnitId   String?
+  criticality EquipmentCriticality @default(B)
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  area    AuditArea        @relation(fields: [areaId], references: [id])
+  orgUnit OrgUnit?         @relation("EquipmentOrgUnit", fields: [orgUnitId], references: [id])
+  audits  Audit[]
+  tags    AbnormalityTag[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, areaId])
+}
+
+model AuditPlan {
+  id             String             @id @default(cuid())
+  tenantId       String
+  name           String
+  templateId     String
+  frequency      AuditPlanFrequency @default(MONTHLY)
+  assignMode     AuditorAssignMode  @default(ROTATION)
+  fixedAuditorId String?
+  crossAudit     Boolean            @default(false)
+  startDate      DateTime           @db.Date
+  endDate        DateTime?          @db.Date
+  isActive       Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  template     AuditTemplate      @relation(fields: [templateId], references: [id])
+  fixedAuditor User?              @relation("AuditPlanFixedAuditor", fields: [fixedAuditorId], references: [id])
+  areas        AuditPlanArea[]
+  auditors     AuditPlanAuditor[]
+  audits       Audit[]
+
+  @@index([tenantId])
+}
+
+model AuditPlanArea {
+  id       String @id @default(cuid())
+  tenantId String
+  planId   String
+  areaId   String
+
+  plan AuditPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  area AuditArea @relation(fields: [areaId], references: [id])
+
+  @@unique([planId, areaId])
+  @@index([tenantId])
+}
+
+model AuditPlanAuditor {
+  id        String @id @default(cuid())
+  tenantId  String
+  planId    String
+  userId    String
+  sortOrder Int    @default(0)
+
+  plan AuditPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  user User      @relation("AuditPlanAuditorUser", fields: [userId], references: [id])
+
+  @@unique([planId, userId])
+  @@index([tenantId])
+}
+
+model Audit {
+  id              String         @id @default(cuid())
+  tenantId        String
+  number          Int
+  templateId      String
+  templateVersion Int            @default(1)
+  scaleType       AuditScaleType @default(ZERO_TO_FOUR)
+  areaId          String
+  equipmentId     String?
+  planId          String?
+  /// Plan kaynaklı denetimler için dönem anahtarı (2026-10, 2026-W41, 2026-Q4)
+  periodKey       String?
+  auditorId       String
+  dueDate         DateTime       @db.Date
+  status          AuditStatus    @default(PLANNED)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  scorePct        Float?
+  /// [{ title, weight, scorePct }]
+  sectionScores   Json?
+  notes           String?
+  cancelledReason String?
+  createdById     String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  template  AuditTemplate @relation(fields: [templateId], references: [id])
+  area      AuditArea     @relation(fields: [areaId], references: [id])
+  equipment Equipment?    @relation(fields: [equipmentId], references: [id])
+  plan      AuditPlan?    @relation(fields: [planId], references: [id])
+  auditor   User          @relation("AuditAuditor", fields: [auditorId], references: [id])
+  answers   AuditAnswer[]
+
+  @@unique([tenantId, number])
+  @@unique([tenantId, planId, areaId, periodKey])
+  @@index([tenantId, status, dueDate])
+  @@index([tenantId, areaId])
+  @@index([tenantId, auditorId])
+}
+
+model AuditAnswer {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  auditId            String
+  sectionTitle       String
+  sectionSortOrder   Int      @default(0)
+  sectionWeight      Float    @default(1)
+  questionText       String
+  guidance           String?
+  weight             Float    @default(1)
+  sortOrder          Int      @default(0)
+  photoRequiredBelow Int?
+  score              Int?
+  comment            String?
+  isFinding          Boolean  @default(false)
+  actionId           String?
+  updatedAt          DateTime @updatedAt
+
+  audit Audit @relation(fields: [auditId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, auditId])
+}
+
+model AbnormalityTag {
+  id           String      @id @default(cuid())
+  tenantId     String
+  number       Int
+  equipmentId  String?
+  areaId       String
+  color        TagColor    @default(RED)
+  category     TagCategory @default(OTHER)
+  description  String
+  openedById   String
+  assignedToId String?
+  dueDate      DateTime?   @db.Date
+  status       TagStatus   @default(OPEN)
+  closedAt     DateTime?
+  closeNote    String?
+  closedById   String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  area       AuditArea  @relation(fields: [areaId], references: [id])
+  equipment  Equipment? @relation(fields: [equipmentId], references: [id])
+  openedBy   User       @relation("TagOpenedBy", fields: [openedById], references: [id])
+  assignedTo User?      @relation("TagAssignedTo", fields: [assignedToId], references: [id])
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+  @@index([tenantId, areaId])
+}

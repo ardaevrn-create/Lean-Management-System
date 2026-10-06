@@ -276,3 +276,43 @@ Başarım %: HIGHER_BETTER `(gerçekleşen−başlangıç)/(hedef−başlangıç
 
 ### Zamanlanmış iş, kartlar ve ekler
 Her ayın 3'ü 08:00 (Europe/Istanbul, `schedulerEnabled` kapalıysa atlanır): elle takip edilen aktif hedeflerde geçen ayın gerçekleşmesi girilmemişse sahibine bildirim (`dedupeKey`, tekrar yok); `HoshinReminderJob.runForCurrentTenant(today)`. Ana sayfa: `GET /dashboard/me` → `widgets.hoshin = { myGoals, redGoals, catchballPending }`. Dosya ekleri: `entityType="HOSHIN_GOAL"`. Web: `/hoshin` (sekmeler), `/hoshin/goals/[id]`, `/hoshin/review/print?planId&year`.
+
+## 5S & TPM Denetimleri (M6)
+
+Numaralar: denetim `DNT-00001`, TPM etiketi `ETK-00001`. Bulgu aksiyonları çekirdek `ActionsService` ile `sourceType=AUDIT_FINDING`, `sourceId=audit.id` olarak açılır. Fotoğraflar `POST /attachments` ile `entityType=AUDIT_ANSWER` (`entityId` = cevap id) veya `TPM_TAG` (`entityId` = etiket id) olarak yüklenir.
+Erişim: denetçi kendi denetimlerini, alan sorumlusu alanının denetimlerini her zaman görür; diğerleri `audit.view`/`audit.manage` kapsamına (alanın birimi) göre. Denetimi yalnız atanan denetçi (`audit.perform`) veya `audit.manage` yürütür. Şablon/alan/ekipman/plan yönetimi `audit.manage` (alan birimine göre kapsamlı). **Etiket açmak için izin gerekmez** (her çalışan); kapatma: `audit.manage`, atanan kişi veya alan sorumlusu. Alan ve ekipman listeleri her kullanıcıya açıktır.
+
+| Yöntem | Yol | İstek | Yanıt |
+|---|---|---|---|
+| GET | `/audits/templates` | `includeInactive?, type?` | `AuditTemplateItem[]` |
+| GET | `/audits/templates/builtin` | | Yerleşik şablon kataloğu: `5S_PRODUCTION, 5S_OFFICE, 5S_WAREHOUSE, TPM_AM_STEP1_3, EQUIPMENT_DAILY` |
+| POST | `/audits/templates/builtin/:key` | `{ name?, code? }` (kod çakışırsa `-2`…) | `AuditTemplateDetail` |
+| POST | `/audits/templates` | `{ name, code, type?, areaType?, scaleType?, description?, sections:[{ title, weight?, questions:[{ text, guidance?, weight?, photoRequiredBelow? }] }] }` | `AuditTemplateDetail` |
+| GET / PATCH / DELETE | `/audits/templates/:id` | PATCH: üst bilgi ve/veya `sections` (tam liste). **Tamamlanmış/başlamış denetimi olan şablonda yapı değişikliği yeni sürüm (kopya) oluşturur**: eski sürüm pasifleşir, planlar ve planlı denetimler yeni sürüme taşınır, `versioned: true` döner | `AuditTemplateDetail` |
+| GET / POST | `/audits/areas` | POST `{ code, name, orgUnitId, responsibleId?, areaType? }` | `AuditAreaItem` |
+| PATCH / DELETE | `/audits/areas/:id` | DELETE = pasifleştirme | `AuditAreaItem` |
+| GET / POST | `/audits/equipment` | `areaId?`; POST `{ code, name, areaId, criticality? (A\|B\|C) }` | `EquipmentItem` |
+| PATCH / DELETE | `/audits/equipment/:id` | | `EquipmentItem` |
+| GET / POST | `/audits/plans` | POST `{ name, templateId, frequency (WEEKLY\|MONTHLY\|QUARTERLY), areaIds[], assignMode (FIXED\|ROTATION), fixedAuditorId?, auditorIds[] (sıralı), crossAudit?, startDate, endDate? }` | `AuditPlanItem` |
+| GET / PATCH / DELETE | `/audits/plans/:id` | | `AuditPlanItem` |
+| POST | `/audits/plans/:id/generate` | `?until=YYYY-MM-DD` (varsayılan bugünün dönemi) | `{ created, existing, skipped[], audits[] }` — alan × dönem başına bir `PLANNED` denetim (termin = dönem sonu); **idempotent**. Rotasyonda çapraz denetim açıksa alanın birim ağacındaki denetçiler atlanır |
+| GET | `/audits` | `view=mine\|all, status, open, overdue, areaId, templateId, templateType, orgUnitId, auditorId, from, to (termin), q, page, pageSize, sort` | `Paginated<AuditListItem>` |
+| POST | `/audits` | `{ templateId, areaId, equipmentId?, auditorId?, dueDate? }` — plansız denetim; başkasına atama yalnız `audit.manage` | `AuditDetail` |
+| GET | `/audits/:id` | | `AuditDetail` (cevaplar, bölüm skorları, `can`) |
+| PATCH | `/audits/:id` | `{ auditorId?, dueDate?, notes? }` (yeniden atama: `audit.manage`) | `AuditDetail` |
+| POST | `/audits/:id/start` | | Şablon soruları cevap satırlarına kopyalanır (anlık görüntü) → `IN_PROGRESS` |
+| PATCH | `/audits/:id/answers/:answerId` | `{ score?, comment?, isFinding? }` — tek cevap, ilerledikçe kaydedilir (`INVALID_SCORE`, `FINDING_NOT_ALLOWED`) | `AuditAnswerItem` |
+| POST | `/audits/:id/answers/:answerId/action` | `{ title?, description?, ownerId? (varsayılan alan sorumlusu), dueDate, priority? }` | `ActionDetail` (`sourceType=AUDIT_FINDING`) |
+| GET | `/audits/:id/actions` | | `ActionListItem[]` |
+| POST | `/audits/:id/complete` | | `AuditDetail`; 422 `ANSWERS_INCOMPLETE` (puansız soru), 422 `PHOTO_REQUIRED` (`photoRequiredBelow` altı puanda fotoğraf yok; `details.answerIds`) |
+| POST | `/audits/:id/cancel` | `{ reason? }` (`audit.manage`) | `AuditDetail` |
+| GET | `/audits/stats` | `orgUnitId?, areaId?, templateType?, from?, to?` | `AuditStats`: alan başına son skor/önceki/ortalama/son 6 trend/bölüm ortalamaları (5S radar), en iyi/kötü sıralama, planlanan-tamamlanan-geciken sayıları, yapılmayan denetim listesi, bulgu/açık aksiyon sayıları, etiket (renk/kategori, ort. kapanış günü) |
+| GET | `/audits/export` | `/audits` filtreleri | `.xlsx` |
+| GET / POST | `/audits/tags` | GET: `view=mine\|all, status, open, overdue, color, category, areaId, equipmentId, assignedToId, q`; POST `{ areaId, equipmentId?, color (RED\|BLUE), category (LEAK\|LOOSENESS\|CONTAMINATION\|DAMAGE\|SAFETY\|MISSING_PART\|OTHER), description, assignedToId? (varsayılan alan sorumlusu), dueDate? (varsayılan kırmızı 3 / mavi 7 gün) }` | `AbnormalityTagItem` |
+| GET / PATCH | `/audits/tags/:id` | PATCH `{ color?, category?, description?, assignedToId?, dueDate? }` | `AbnormalityTagItem` |
+| POST | `/audits/tags/:id/start` · `/close` · `/cancel` | close: `{ closeNote? }` | `AbnormalityTagItem` |
+| GET | `/audits/tags/export` | etiket filtreleri | `.xlsx` |
+
+Puanlama: cevap skalaya göre %'ye çevrilir (0–4, 0–5, Evet/Hayır = 1/0), bölüm içinde soru ağırlığıyla, bölümler arasında bölüm ağırlığıyla ağırlıklandırılır → `scorePct`. Puanlanmamış sorular hesaba katılmaz.
+Zamanlanmış iş: her gün 07:00 (Europe/Istanbul): terminine 2 gün kalan denetim → denetçi; geciken denetim → denetçi, 3 gün gecikince alanın birim yöneticisi; geciken etiket → atanan (hepsi tekilleştirilmiş). Pano kartı: `widgets.audits = { myDue, myOverdue, tagsAssigned }`.
+Bulgudan problem açma: `/problems?new=1&source=AUDIT_FINDING&sourceId=<denetimId>&sourceLabel=..&orgUnitId=..`.

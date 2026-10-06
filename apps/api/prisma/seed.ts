@@ -18,6 +18,7 @@ import { UsersService } from '../src/core/users/users.service';
 import { hashPassword } from '../src/core/auth/auth.service';
 import { seedMeetings } from './seed-meetings';
 import { seedKpis } from './seed-kpi';
+import { seedAudits } from './seed-audits';
 import { seedProblems } from './seed-problems';
 import { seedStrategy } from './seed-strategy';
 
@@ -118,6 +119,7 @@ async function main() {
     await seedProblems(app, { byNo });
     // Stratejik plan + Hoshin demo verisi (KPI kodlarına bağlıdır)
     await seedStrategy(app, { byNo, day });
+    await seedAudits(app, { byNo, units: { hat1: hat1.id, hat2: hat2.id, kalite: kalite.id, bakim: bakim.id, ik: ik.id } });
   });
 
   console.log('Seed tamamlandı.');

@@ -42,7 +42,7 @@ export const NAV: NavGroup[] = [
       // Hoshin: hedef sahipleri hoshin.view olmadan da kendi hedeflerini görür; veri kapsamı API'da uygulanır
       { href: "/hoshin", labelKey: "nav.hoshin", icon: Target },
       { href: "/problems", labelKey: "nav.problems", icon: Puzzle, permission: "problem.create" },
-      { href: "/audits", labelKey: "nav.audits", icon: ClipboardCheck, permission: "audit.view" },
+      { href: "/audits", labelKey: "nav.audits", icon: ClipboardCheck },
       { href: "/suggestions", labelKey: "nav.suggestions", icon: Lightbulb, permission: "suggestion.create" },
     ],
   },
