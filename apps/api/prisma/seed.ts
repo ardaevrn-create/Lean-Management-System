@@ -20,6 +20,7 @@ import { seedMeetings } from './seed-meetings';
 import { seedKpis } from './seed-kpi';
 import { seedProblems } from './seed-problems';
 import { seedStrategy } from './seed-strategy';
+import { seedSuggestions } from './seed-suggestions';
 
 const DEMO_PASSWORD = 'Demo1234!';
 
@@ -118,6 +119,7 @@ async function main() {
     await seedProblems(app, { byNo });
     // Stratejik plan + Hoshin demo verisi (KPI kodlarına bağlıdır)
     await seedStrategy(app, { byNo, day });
+    await seedSuggestions(app, { byNo });
   });
 
   console.log('Seed tamamlandı.');

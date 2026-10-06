@@ -6,3 +6,4 @@ export * from './kpi';
 export * from './meetings';
 export * from './problems';
 export * from './strategy';
+export * from './suggestions';

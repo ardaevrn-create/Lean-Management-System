@@ -276,3 +276,54 @@ Başarım %: HIGHER_BETTER `(gerçekleşen−başlangıç)/(hedef−başlangıç
 
 ### Zamanlanmış iş, kartlar ve ekler
 Her ayın 3'ü 08:00 (Europe/Istanbul, `schedulerEnabled` kapalıysa atlanır): elle takip edilen aktif hedeflerde geçen ayın gerçekleşmesi girilmemişse sahibine bildirim (`dedupeKey`, tekrar yok); `HoshinReminderJob.runForCurrentTenant(today)`. Ana sayfa: `GET /dashboard/me` → `widgets.hoshin = { myGoals, redGoals, catchballPending }`. Dosya ekleri: `entityType="HOSHIN_GOAL"`. Web: `/hoshin` (sekmeler), `/hoshin/goals/[id]`, `/hoshin/review/print?planId&year`.
+
+## Öneri & Kaizen (M7)
+
+İzinler: `suggestion.create` (her çalışan; öneri verir, kendi/ortak olduğu önerileri görür), `suggestion.evaluate` (komite puanlama), `suggestion.manage` (birim kapsamlı; tüm öneriler, ayarlar, finans onayı, ayın önerisi). Ön değerlendirici izinden bağımsız olarak ayara göre belirlenir (`DIRECT_MANAGER`: öneri sahibinin yöneticisi, `ORG_UNIT_MANAGER`: alanın birim yöneticisi; kendisi ise diğer yönteme düşer). Hata kodları (422): `INVALID_TRANSITION`, `REASON_REQUIRED`, `INVALID_SCORES`, `FAST_TRACK_NOT_ALLOWED`, `NO_COMMITTEE_SCORES`, `OPEN_ACTIONS`, `ALREADY_CONVERTED`, `NOT_TANGIBLE`.
+
+Durum akışı: `SUBMITTED → PRE_EVALUATION → COMMITTEE → ACCEPTED | REJECTED | ON_HOLD → IN_IMPLEMENTATION → IMPLEMENTED → CLOSED`; karar öncesi `WITHDRAWN`. Hızlı onay: ön değerlendirme puanı ≥ `autoAcceptMinScore` ve tahmini maliyet ≤ `autoAcceptMaxCost` ise ön değerlendirici komitesiz `ACCEPTED` yapabilir. Toplam puan = kriter puanı/üst sınır × ağırlık (ağırlıklar normalize, 0–100).
+
+### Öneriler
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/suggestions` | `view=mine\|queue\|all, stage=PRE\|COMMITTEE, status?, category?, orgUnitId?, submittedById?, from?, to?, q?, page, pageSize, sort` — `queue`: ön değerlendirmesini yapacağım + komite kuyruğu; `all`: yalnız `suggestion.manage` | `Paginated<SuggestionListItem>` (`awaitingMe`) |
+| POST | `/suggestions` | `{ title, currentState, proposedState, expectedBenefit, category?, orgUnitId?, estimatedCost?, estimatedSaving?, selfImplementable?, coSubmitterIds? }` (`suggestion.create`); gönderim puanı verilir | `SuggestionDetail` |
+| GET | `/suggestions/:id` | görünürlük: sahibi/ortak/ön değerlendirici/uygulayıcı/komite/yönetici | `SuggestionDetail` (`evaluations`, `events`, `can`) |
+| PATCH | `/suggestions/:id` | gönderen, ön değerlendirme bitmeden | `SuggestionDetail` |
+| POST | `/suggestions/:id/withdraw` | karar öncesi, gönderen | `SuggestionDetail` |
+| POST | `/suggestions/:id/pre-evaluation` | `{ scores:{kriter:puan}, decision: FORWARD\|ACCEPT\|REJECT\|REVISE, comment?, reason? }` | `SuggestionDetail` |
+| POST | `/suggestions/:id/committee-evaluation` | `{ scores, comment?, decision?: ACCEPT\|REJECT\|HOLD }` — her komite üyesi kendi puanını girer/günceller | `SuggestionDetail` |
+| POST | `/suggestions/:id/decision` | `{ decision: ACCEPT\|REJECT\|HOLD, reason?, note? }` — `suggestion.manage` veya komite başkanı (`TeamMember.role=CHAIR`; yoksa komite üyesi); ACCEPT: nihai puan = komite ortalaması, kabul puanı (banda göre) | `SuggestionDetail` |
+| POST | `/suggestions/:id/implementer` | `{ implementerId, targetDate? }` (yönetici/ön değerlendirici; "kendim uygularım" ise sahibi kendini atayabilir) → `IN_IMPLEMENTATION` | `SuggestionDetail` |
+| GET/POST | `/suggestions/:id/actions` | `{ title, ownerId, dueDate, priority?, description? }` — `ActionsService.create`, `sourceType=SUGGESTION`, `sourceId=id`, `sourceLabel="ONR-00012 <başlık>"` | `ActionListItem[]` / `ActionDetail` |
+| POST | `/suggestions/:id/implemented` | `{ note? }` — açık aksiyon varsa `OPEN_ACTIONS`; uygulama puanı verilir | `SuggestionDetail` |
+| POST | `/suggestions/:id/close` | `IMPLEMENTED → CLOSED` | `SuggestionDetail` |
+| POST | `/suggestions/:id/suggestion-of-month` | `{ value, month? }` (`suggestion.manage`; ayda bir) | `SuggestionDetail` |
+| POST | `/suggestions/:id/kaizen` | `{ type? }` — kabul edilmiş öneriden önceden doldurulmuş kaizen taslağı | `KaizenDetail` |
+| GET | `/suggestions/export` | liste filtreleri | `.xlsx` |
+
+### Ayarlar, puan ve istatistik
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/suggestions/settings` | herkes | `SuggestionSettingsDto` (kriterler, `preEvaluation`, komite ekibi, hızlı onay eşikleri, `pointRules`, `rewardTiers`) |
+| PUT | `/suggestions/settings` | `suggestion.manage`; komite ekibi `COMMITTEE` türünde olmalı | `SuggestionSettingsDto` |
+| GET | `/suggestions/points/me` | — | `MyPointsDto` (toplam, kademe, sonraki kademe, geçmiş) |
+| GET | `/suggestions/points/leaderboard` | `from?, to?, limit?` | `LeaderboardEntry[]` |
+| GET | `/suggestions/stats` | `orgUnitId?, from?, to?` (`suggestion.manage` veya `suggestion.evaluate`) | `SuggestionStats`: durum dağılımı, kabul/uygulama oranı, ortalama gün (gönderim→karar, karar→uygulama), kişi başı öneri, katılım % (farklı öneri veren / aktif çalışan), kategori, aylık eğilim, birim bazlı, en çok katkı verenler, kaizen (tür, toplam / finans onaylı yıllık kazanç, birim) |
+
+### Kaizen
+Puan: yayınlandığında lider + ekip (`kaizenPublished`). Önce/sonra fotoğrafları `/attachments` ile `entityType="KAIZEN_BEFORE"` / `"KAIZEN_AFTER"` (`entityId`=kaizen id); öneri ekleri `entityType="SUGGESTION"`.
+| Yöntem | Yol | Girdi | Çıktı |
+|---|---|---|---|
+| GET | `/suggestions/kaizen` | `view=mine\|approval\|all\|library, type?, status?, orgUnitId?, q?, page, pageSize` | `Paginated<KaizenListItem>` |
+| GET | `/suggestions/kaizen/library` | `q?, type?, orgUnitId?` — yayınlanmış kaizenler, tüm kullanıcılar | `Paginated<KaizenListItem>` |
+| POST | `/suggestions/kaizen` | `{ type: QUICK\|EVENT\|PROJECT, title, problem, rootCause?, beforeDescription, afterDescription, orgUnitId?, leaderId?, memberIds?, startDate?, endDate?, suggestionId?, standardization?, horizontalDeployment?, gains? }` | `KaizenDetail` (DRAFT) |
+| GET / PATCH | `/suggestions/kaizen/:id` | taslak/reddedilmiş iken ekip; yönetici her zaman | `KaizenDetail` |
+| POST | `/suggestions/kaizen/:id/submit` \| `approve` \| `publish` \| `reject` | `approve`: `{ publish? }`; `reject`: `{ reason }`. Onay: liderin yöneticisi veya `suggestion.manage` (lider kendi kaizenini onaylayamaz) | `KaizenDetail` |
+| POST/PATCH/DELETE | `/suggestions/kaizen/:id/gains[/:gainId]` | `{ type: TANGIBLE\|INTANGIBLE, metric: COST_TL\|TIME_MIN\|SCRAP\|AREA_M2\|DISTANCE_M\|ENERGY_KWH\|SAFETY\|QUALITY\|OTHER, description, beforeValue?, afterValue?, annualSaving? }`; değer değişince finans onayı düşer | `KaizenDetail` |
+| POST | `/suggestions/kaizen/:id/gains/:gainId/finance-approval` | `{ approved }` (`suggestion.manage`; M7-06) | `KaizenDetail` |
+| GET/POST | `/suggestions/kaizen/:id/actions` | öneri aksiyonu ile aynı gövde; `sourceType=KAIZEN` | `ActionListItem[]` / `ActionDetail` |
+| GET | `/suggestions/kaizen/export` | liste filtreleri | `.xlsx` |
+
+### Zamanlanmış iş, kartlar
+Her gün 08:15 (Europe/Istanbul, `schedulerEnabled` kapalıysa atlanır; şirket başına): 5 günden uzun süredir ön değerlendirme bekleyen öneriler → ön değerlendirici (yoksa `suggestion.manage` kullanıcıları), ISO hafta başına bir kez (`dedupeKey`); komite kuyruğu haftalık özeti → komite üyeleri (ISO hafta başına bir kez). `SuggestionsReminderJob.runForCurrentTenant(today)`. Aksiyonların tamamı DONE/VERIFIED olunca uygulayıcıya/ön değerlendiriciye "uygulandı olarak işaretleyin" bildirimi. Ana sayfa: `GET /dashboard/me` → `widgets.suggestions = { mySubmitted, awaitingMyEvaluation, myPoints, tier }`. Web: `/suggestions` (sekmeler), `/suggestions/[id]`, `/suggestions/kaizen/[id]`, `/suggestions/kaizen/[id]/print`.
