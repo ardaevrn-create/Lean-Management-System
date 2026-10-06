@@ -9,6 +9,7 @@ Profesyonel şirketler için **yalın yönetim** ve **kalite yönetim sistemi** 
 | [docs/01-gereksinim-analizi-ve-plan.md](docs/01-gereksinim-analizi-ve-plan.md) | Gereksinimler, kararlar, faz planı |
 | [docs/02-teknik-tasarim.md](docs/02-teknik-tasarim.md) | Mimari ve geliştirme kuralları |
 | [docs/03-api-uc-noktalari.md](docs/03-api-uc-noktalari.md) | API uç noktaları |
+| [docs/04-durum-raporu.md](docs/04-durum-raporu.md) | Güncel durum, bilinen eksikler, sonraki adımlar |
 
 ## Yapı
 
