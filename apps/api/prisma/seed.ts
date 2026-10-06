@@ -16,6 +16,7 @@ import { PrismaService } from '../src/core/prisma/prisma.service';
 import { TenantProvisioningService } from '../src/core/tenants/tenant-provisioning.service';
 import { UsersService } from '../src/core/users/users.service';
 import { hashPassword } from '../src/core/auth/auth.service';
+import { seedMeetings } from './seed-meetings';
 
 const DEMO_PASSWORD = 'Demo1234!';
 
@@ -107,6 +108,8 @@ async function main() {
     await actions.create({ title: 'Kompresör hava kaçağı tespiti ve giderilmesi', ownerId: byNo['1004'], dueDate: day(-1), priority: 'CRITICAL', sourceLabel: 'TPM denetimi' });
     await actions.create({ title: 'Operatör iş güvenliği eğitimi katılımı', ownerId: byNo['3001'], dueDate: day(14), priority: 'LOW' });
     await actions.create({ title: '5S etiketlerinin yenilenmesi', ownerId: byNo['3002'], dueDate: day(7), priority: 'LOW' });
+
+    await seedMeetings(app, { byNo, units: { fabrika: fabrika.id, uretim: uretim.id, hat1: hat1.id, kalite: kalite.id } });
   });
 
   console.log('Seed tamamlandı.');

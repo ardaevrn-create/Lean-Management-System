@@ -1,0 +1,173 @@
+// ---------- Toplantı Yönetimi (M4) ----------
+
+enum MeetingCategory {
+  TIER
+  DEPARTMENT
+  MANAGEMENT_REVIEW
+  PROJECT
+  OTHER
+}
+
+enum MeetingFrequency {
+  DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+  ADHOC
+}
+
+enum MeetingStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MeetingParticipantRole {
+  ORGANIZER
+  PARTICIPANT
+  OPTIONAL
+  GUEST
+}
+
+enum MeetingAttendance {
+  UNKNOWN
+  PRESENT
+  ABSENT
+  EXCUSED
+  LATE
+}
+
+model MeetingType {
+  id                 String           @id @default(cuid())
+  tenantId           String
+  name               String
+  code               String
+  description        String?
+  category           MeetingCategory  @default(OTHER)
+  /// 1 = hat, 2 = bölüm, 3 = fabrika (Tier toplantıları)
+  tier               Int?
+  frequency          MeetingFrequency @default(WEEKLY)
+  defaultDurationMin Int              @default(60)
+  defaultLocation    String?
+  orgUnitId          String?
+  facilitatorId      String?
+  /// [{ title, durationMin?, description? }]
+  agendaTemplate     Json             @default("[]")
+  isActive           Boolean          @default(true)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  orgUnit     OrgUnit?            @relation(fields: [orgUnitId], references: [id])
+  facilitator User?               @relation("MeetingTypeFacilitator", fields: [facilitatorId], references: [id])
+  members     MeetingTypeMember[]
+  meetings    Meeting[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model MeetingTypeMember {
+  id       String                 @id @default(cuid())
+  tenantId String
+  typeId   String
+  userId   String
+  role     MeetingParticipantRole @default(PARTICIPANT)
+
+  type MeetingType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  user User        @relation("MeetingTypeMemberUser", fields: [userId], references: [id])
+
+  @@unique([typeId, userId])
+  @@index([tenantId])
+}
+
+model Meeting {
+  id              String        @id @default(cuid())
+  tenantId        String
+  number          Int
+  typeId          String?
+  title           String
+  startAt         DateTime
+  endAt           DateTime
+  location        String?
+  onlineUrl       String?
+  organizerId     String
+  orgUnitId       String?
+  status          MeetingStatus @default(PLANNED)
+  /// Tekrarlayan toplantıları gruplar
+  seriesId        String?
+  /// Genel notlar / tutanak özeti
+  summary         String?
+  guests          String[]
+  completedAt     DateTime?
+  cancelledReason String?
+  createdById     String
+  deletedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  type         MeetingType?         @relation(fields: [typeId], references: [id])
+  organizer    User                 @relation("MeetingOrganizer", fields: [organizerId], references: [id])
+  createdBy    User                 @relation("MeetingCreatedBy", fields: [createdById], references: [id])
+  orgUnit      OrgUnit?             @relation(fields: [orgUnitId], references: [id])
+  participants MeetingParticipant[]
+  agendaItems  MeetingAgendaItem[]
+  decisions    MeetingDecision[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, startAt])
+  @@index([tenantId, typeId, startAt])
+  @@index([tenantId, seriesId])
+  @@index([tenantId, organizerId])
+}
+
+model MeetingParticipant {
+  id         String                 @id @default(cuid())
+  tenantId   String
+  meetingId  String
+  userId     String
+  role       MeetingParticipantRole @default(PARTICIPANT)
+  attendance MeetingAttendance      @default(UNKNOWN)
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user    User    @relation("MeetingParticipantUser", fields: [userId], references: [id])
+
+  @@unique([meetingId, userId])
+  @@index([tenantId, userId])
+}
+
+model MeetingAgendaItem {
+  id          String  @id @default(cuid())
+  tenantId    String
+  meetingId   String
+  sortOrder   Int     @default(0)
+  title       String
+  description String?
+  presenterId String?
+  durationMin Int?
+  /// Toplantı sırasında tutulan görüşme notları
+  discussion  String?
+  isCompleted Boolean @default(false)
+
+  meeting   Meeting           @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  presenter User?             @relation("MeetingAgendaPresenter", fields: [presenterId], references: [id])
+  decisions MeetingDecision[]
+
+  @@index([tenantId, meetingId])
+}
+
+model MeetingDecision {
+  id           String   @id @default(cuid())
+  tenantId     String
+  meetingId    String
+  agendaItemId String?
+  text         String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  meeting    Meeting            @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  agendaItem MeetingAgendaItem? @relation(fields: [agendaItemId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, meetingId])
+}
