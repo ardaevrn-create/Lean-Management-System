@@ -114,7 +114,9 @@ docker-compose.yml     postgres, redis
 - ID: `String @id @default(cuid())`.
 - Her tenant tablosunda: `tenantId`, `createdAt`, `updatedAt`, gerektiğinde `createdById`, `deletedAt`.
 - Prisma şeması **çok dosyalı**: `apps/api/prisma/schema/<modül>.prisma`. Her modül kendi dosyasını yönetir; çekirdek modellere (User, Tenant, OrgUnit) ters ilişki eklemek gerekirse ilgili satır `core.prisma`'ya eklenir.
-- Migration: `prisma migrate dev --name <açıklama>`.
+- Migration: `pnpm --filter @lean/api exec prisma migrate dev --name <açıklama>` (dosyalar `prisma/schema/migrations/` altında).
+- Create işlemlerinde **unchecked input** kullanın (`ownerId: x`, `owner: { connect }` değil) ve `tenantId: this.ctx.tenantId` verin; tenant extension `tenantId` alanını ayrıca zorlar. Nested create'lerde alt kayıtlara da `tenantId` verilmelidir.
+- `prisma.db` = tenant izolasyonlu istemci (varsayılan). `prisma.raw` = filtresiz; yalnız auth, platform yönetimi ve zamanlanmış işlerde.
 - Sayısal KPI değerleri: `Decimal(18,4)`.
 
 ## 9. Frontend Kuralları
@@ -127,17 +129,32 @@ docker-compose.yml     postgres, redis
 - Mobil uyumlu (responsive) tasarım zorunlu: saha kullanıcıları telefondan girer.
 - Menü öğeleri yetkiye göre gösterilir.
 
-## 10. Test ve Kalite
+## 10. Modül Geliştirme Kalıbı
+
+Yeni bir iş modülü (ör. `modules/kpi`) şu kalıbı izler:
+1. `prisma/schema/<modül>.prisma` + migration; `packages/shared` içine izin kodları ve yanıt tipleri.
+2. `src/modules/<modül>/` altında NestJS modülü; `AppModule.imports` listesine eklenir.
+3. Aksiyon açmak için `ActionsService.create({... sourceType, sourceId, sourceLabel })`; kaynağa bağlı aksiyonlar `ActionsService.listBySource()`.
+4. Aksiyon kapanışını dinlemek için `DomainEvents.on(ActionEvents.StatusChanged, ...)`.
+5. Excel içe aktarma için `Importer` arayüzünü uygulayan sınıf, `onModuleInit` içinde `ImportRegistry.register(this)`.
+6. Kişisel panoya kart: `DashboardService.registerWidget('<modül>.<kart>', fn)`.
+7. Bildirim: `NotificationsService.notify({ userIds, type, title, link, dedupeKey })`.
+8. Değişiklik kaydı: `AuditService.log(entity, id, action, diff)`.
+9. Zamanlanmış iş: `@Cron` + `RequestContext.runForTenant()` ile her şirket için çalıştırın.
+
+## 11. Test ve Kalite
 
 - API: Jest birim testleri (iş kuralları için zorunlu: KPI durum hesaplama, sapma zorunluluğu, aksiyon gecikme vb.) + e2e testleri (supertest) kritik akışlar için.
 - Lint: ESLint + Prettier. `pnpm lint`, `pnpm typecheck`, `pnpm test` CI'da çalışır.
 
-## 11. Geliştirme Ortamı
+## 12. Geliştirme Ortamı
 
 ```
 docker compose up -d          # postgres + redis
 pnpm install
-pnpm --filter api prisma migrate dev
-pnpm --filter api seed        # demo şirket: kod DEMO, kullanıcı admin / Admin123!
-pnpm dev                      # api :4000, web :3000
+cp apps/api/.env.example apps/api/.env
+pnpm --filter @lean/api exec prisma migrate deploy
+pnpm --filter @lean/api seed  # demo şirket: kod DEMO, kullanıcı admin / Admin123!
+pnpm dev                      # api :4000 (Swagger: /api/docs), web :3000
+pnpm --filter @lean/api test:e2e   # lean_test veritabanı gerekir
 ```

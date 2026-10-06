@@ -1,0 +1,443 @@
+{
+  "app": {
+    "name": "Lean Yönetim"
+  },
+  "common": {
+    "active": "Aktif",
+    "all": "Tümü",
+    "back": "Geri",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "code": "Kod",
+    "comingSoon": "Yakında",
+    "comingSoonDesc": "Bu modül sonraki fazlarda eklenecek.",
+    "confirm": "Onayla",
+    "copied": "Kopyalandı",
+    "copy": "Kopyala",
+    "create": "Oluştur",
+    "delete": "Sil",
+    "deleted": "Silindi.",
+    "description": "Açıklama",
+    "download": "İndir",
+    "edit": "Düzenle",
+    "email": "E-posta",
+    "error": "Bir hata oluştu.",
+    "exportExcel": "Excel'e Aktar",
+    "inactive": "Pasif",
+    "language": "Dil",
+    "loading": "Yükleniyor...",
+    "name": "Ad",
+    "networkError": "Sunucuya ulaşılamadı. Bağlantınızı kontrol edin.",
+    "next": "Sonraki",
+    "noResults": "Sonuç bulunamadı",
+    "pageInfo": "{from}-{to} / {total}",
+    "phone": "Telefon",
+    "prev": "Önceki",
+    "save": "Kaydet",
+    "saved": "Kaydedildi.",
+    "search": "Ara...",
+    "select": "Seçiniz",
+    "selectAll": "Tümünü seç",
+    "sortOrder": "Sıra",
+    "status": "Durum",
+    "type": "Tür",
+    "viewAll": "Tümünü gör"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "actions": "Aksiyonlarım",
+    "kpi": "KPI",
+    "meetings": "Toplantılar",
+    "hoshin": "Strateji & Hoshin",
+    "problems": "Problem Çözme",
+    "audits": "5S & TPM",
+    "suggestions": "Öneri & Kaizen",
+    "groupOrg": "Organizasyon",
+    "groupAdmin": "Yönetim",
+    "orgUnits": "Organizasyon Şeması",
+    "employees": "Personel",
+    "teams": "Takımlar",
+    "users": "Kullanıcılar",
+    "roles": "Roller",
+    "imports": "Excel İçe Aktarma",
+    "apiKeys": "API Anahtarları",
+    "auditLogs": "Denetim İzi",
+    "settings": "Şirket Ayarları",
+    "menu": "Menü",
+    "toggle": "Menüyü daralt/genişlet"
+  },
+  "auth": {
+    "loginTitle": "Giriş Yap",
+    "loginSubtitle": "Şirket kodunuz ve hesap bilgilerinizle giriş yapın.",
+    "tenantCode": "Şirket Kodu",
+    "username": "Kullanıcı Adı",
+    "usernameHint": "E-posta adresiniz veya sicil numaranız",
+    "password": "Şifre",
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "invalidCredentials": "Şirket kodu, kullanıcı adı veya şifre hatalı.",
+    "changePassword": "Şifre Değiştir",
+    "mustChangeInfo": "Devam etmek için geçici şifrenizi değiştirmelisiniz.",
+    "currentPassword": "Mevcut Şifre",
+    "newPassword": "Yeni Şifre",
+    "confirmPassword": "Yeni Şifre (Tekrar)",
+    "passwordHint": "En az 8 karakter.",
+    "passwordTooShort": "Şifre en az 8 karakter olmalıdır.",
+    "passwordMismatch": "Şifreler eşleşmiyor.",
+    "passwordChanged": "Şifreniz değiştirildi."
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "empty": "Bildiriminiz yok.",
+    "markAllRead": "Tümünü okundu say"
+  },
+  "home": {
+    "welcome": "Merhaba, {name}",
+    "subtitle": "Kişisel panonuz",
+    "openActions": "Açık Aksiyon",
+    "overdueActions": "Geciken Aksiyon",
+    "dueThisWeek": "Bu Hafta Termin",
+    "unreadNotifications": "Okunmamış Bildirim",
+    "upcomingActions": "Yaklaşan Aksiyonlarım",
+    "noUpcoming": "Yaklaşan aksiyonunuz yok."
+  },
+  "actionStatus": {
+    "OPEN": "Açık",
+    "IN_PROGRESS": "Devam Ediyor",
+    "DONE": "Tamamlandı",
+    "VERIFIED": "Doğrulandı",
+    "CANCELLED": "İptal"
+  },
+  "priority": {
+    "LOW": "Düşük",
+    "MEDIUM": "Orta",
+    "HIGH": "Yüksek",
+    "CRITICAL": "Kritik"
+  },
+  "actionSource": {
+    "MANUAL": "Manuel",
+    "MEETING": "Toplantı",
+    "KPI_DEVIATION": "KPI Sapması",
+    "PROBLEM": "Problem",
+    "AUDIT_FINDING": "Denetim Bulgusu",
+    "HOSHIN": "Hoshin",
+    "SUGGESTION": "Öneri",
+    "KAIZEN": "Kaizen"
+  },
+  "orgType": {
+    "COMPANY": "Şirket",
+    "SITE": "Tesis",
+    "DIRECTORATE": "Direktörlük",
+    "DEPARTMENT": "Departman",
+    "UNIT": "Birim",
+    "LINE": "Hat",
+    "AREA": "Alan"
+  },
+  "teamType": {
+    "COMMITTEE": "Komite",
+    "KAIZEN_TEAM": "Kaizen Takımı",
+    "FIVE_S_TEAM": "5S Takımı",
+    "HOSHIN_TEAM": "Hoshin Takımı",
+    "OTHER": "Diğer"
+  },
+  "actions": {
+    "title_plural": "Aksiyonlar",
+    "new": "Yeni Aksiyon",
+    "created": "Aksiyon oluşturuldu.",
+    "code": "Kod",
+    "title": "Başlık",
+    "description": "Açıklama",
+    "owner": "Sorumlu",
+    "status": "Durum",
+    "priority": "Öncelik",
+    "dueDate": "Termin",
+    "progress": "İlerleme",
+    "orgUnit": "Birim",
+    "supporters": "Destekleyenler",
+    "addSupporter": "Destekleyen ekle...",
+    "createdBy": "Oluşturan",
+    "overdue": "Gecikmiş",
+    "overdueDays": "{days} gün gecikti",
+    "viewMine": "Benim",
+    "viewTeam": "Ekibim",
+    "viewCreated": "Oluşturduklarım",
+    "viewAll": "Tümü",
+    "allSources": "Tüm kaynaklar",
+    "onlyOverdue": "Sadece gecikenler",
+    "list": "Liste",
+    "kanban": "Kanban",
+    "empty": "Aksiyon bulunamadı.",
+    "backToList": "Aksiyonlara dön",
+    "statusChanged": "Durum güncellendi.",
+    "to": {
+      "OPEN": "Yeniden Aç",
+      "IN_PROGRESS": "Başlat / Devam Ettir",
+      "DONE": "Tamamlandı Olarak İşaretle",
+      "VERIFIED": "Doğrula ve Kapat",
+      "CANCELLED": "İptal Et"
+    },
+    "completeTitle": "Aksiyonu Tamamla",
+    "completionNote": "Tamamlama Notu",
+    "completionNoteHint": "Yapılanları kısaca açıklayın.",
+    "originalDue": "İlk termin: {date}",
+    "dueRequests": "Termin Değişikliği Talepleri",
+    "requestDueChange": "Termin Değişikliği Talep Et",
+    "noDueRequests": "Termin değişikliği talebi yok.",
+    "newDueDate": "Yeni Termin",
+    "reason": "Gerekçe",
+    "dueRequestSent": "Talep gönderildi.",
+    "dueStatus": {
+      "PENDING": "Bekliyor",
+      "APPROVED": "Onaylandı",
+      "REJECTED": "Reddedildi"
+    },
+    "approve": "Onayla",
+    "reject": "Reddet",
+    "awaitingDecision": "Bekleyen talepler yönetici onayındadır.",
+    "comments": "Yorumlar",
+    "noComments": "Henüz yorum yok.",
+    "commentPlaceholder": "Yorum yazın...",
+    "send": "Gönder",
+    "history": "Geçmiş",
+    "hist": {
+      "CREATED": "Aksiyon oluşturuldu",
+      "UPDATED": "Aksiyon güncellendi",
+      "STATUS_CHANGED": "Durum: {from} → {to}",
+      "DUE_DATE_CHANGED": "Termin: {from} → {to}",
+      "PROGRESS": "İlerleme: %{from} → %{to}",
+      "OWNER_CHANGED": "Sorumlu: {from} → {to}"
+    }
+  },
+  "attachments": {
+    "title": "Dosya Ekleri",
+    "dropHint": "Dosyaları buraya sürükleyin veya tıklayıp seçin",
+    "empty": "Ek dosya yok.",
+    "uploaded": "Dosya yüklendi.",
+    "deleteConfirm": "\"{name}\" dosyası silinecek. Emin misiniz?"
+  },
+  "org": {
+    "unitsDesc": "Şirketin birim hiyerarşisi",
+    "addRoot": "Üst Düzey Birim Ekle",
+    "addChild": "Alt birim ekle",
+    "newUnit": "Yeni Birim",
+    "editUnit": "Birimi Düzenle",
+    "parent": "Üst Birim",
+    "noParent": "(Üst birim yok)",
+    "manager": "Yönetici",
+    "noUnits": "Henüz birim tanımlı değil.",
+    "deleteConfirm": "\"{name}\" birimi silinecek. Alt birim veya personeli varsa silinemez."
+  },
+  "employees": {
+    "new": "Yeni Personel",
+    "edit": "Personeli Düzenle",
+    "no": "Sicil No",
+    "titleField": "Unvan",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "hireDate": "İşe Giriş Tarihi",
+    "orgUnit": "Birim",
+    "manager": "Yöneticisi",
+    "account": "Hesap",
+    "createUser": "Kullanıcı hesabı oluştur",
+    "createUserHint": "Sicil no ile giriş yapabilen bir hesap ve geçici şifre oluşturulur.",
+    "searchPlaceholder": "Ad, soyad veya sicil no ara...",
+    "allUnits": "Tüm birimler",
+    "empty": "Personel bulunamadı.",
+    "deactivate": "Pasife Al",
+    "deactivated": "Personel pasife alındı.",
+    "deactivateConfirm": "\"{name}\" pasife alınacak. Emin misiniz?"
+  },
+  "credential": {
+    "title": "Hesap Bilgileri",
+    "warning": "Geçici şifre yalnızca bir kez gösterilir. Lütfen kopyalayıp kullanıcıyla güvenli şekilde paylaşın.",
+    "tempPassword": "Geçici Şifre",
+    "copyAll": "Bilgileri kopyala"
+  },
+  "teams": {
+    "new": "Yeni Takım",
+    "edit": "Takımı Düzenle",
+    "members": "Üyeler",
+    "role": "Rol",
+    "addMember": "Üye ekle...",
+    "empty": "Henüz takım yok.",
+    "deleteConfirm": "\"{name}\" takımı silinecek. Emin misiniz?"
+  },
+  "users": {
+    "new": "Yeni Kullanıcı",
+    "user": "Kullanıcı",
+    "fullName": "Ad Soyad",
+    "roles": "Roller",
+    "lastLogin": "Son Giriş",
+    "mustChange": "Şifre değişmeli",
+    "empty": "Kullanıcı bulunamadı.",
+    "passwordHint": "Boş bırakılırsa geçici şifre üretilir.",
+    "linkedEmployee": "Bağlı Personel",
+    "editRoles": "Rolleri Düzenle",
+    "addRole": "Rol Ekle",
+    "wholeCompany": "Tüm şirket",
+    "scopeHint": "Birim seçilirse yetki yalnızca o birim ve altında geçerlidir; boşsa tüm şirkette.",
+    "resetPassword": "Şifre Sıfırla",
+    "resetConfirm": "\"{name}\" için yeni bir geçici şifre oluşturulacak.",
+    "activate": "Aktifleştir",
+    "deactivate": "Pasifleştir",
+    "bulkFromEmployees": "Personelden Toplu Hesap Aç",
+    "bulkHint": "Henüz kullanıcı hesabı olmayan aktif personeli seçin.",
+    "noCandidates": "Hesabı olmayan personel yok.",
+    "createAccounts": "{count} Hesap Oluştur",
+    "downloadCsv": "CSV / Excel İndir"
+  },
+  "roles": {
+    "new": "Yeni Rol",
+    "edit": "Rolü Düzenle",
+    "empty": "Rol bulunamadı.",
+    "permissions": "Yetkiler",
+    "permCount": "{count} yetki",
+    "userCount": "{count} kullanıcı",
+    "system": "Sistem rolü",
+    "deleteConfirm": "\"{name}\" rolü silinecek. Emin misiniz?"
+  },
+  "imports": {
+    "subtitle": "Excel veya CSV dosyalarından toplu veri yükleyin.",
+    "step": {
+      "upload": "Dosya Yükle",
+      "mapping": "Kolon Eşleştirme",
+      "validate": "Doğrulama",
+      "result": "Sonuç"
+    },
+    "type": "İçe Aktarma Türü",
+    "columns": "Beklenen kolonlar (* zorunlu)",
+    "downloadTemplate": "Şablonu İndir",
+    "dropTitle": "Dosyayı buraya sürükleyip bırakın",
+    "dropHint": "veya tıklayıp seçin (.xlsx, .csv)",
+    "badFileType": "Yalnızca .xlsx veya .csv dosyaları yüklenebilir (eski .xls dosyasını .xlsx olarak kaydedin).",
+    "totalRows": "{count} satır",
+    "mappingHint": "Her içe aktarma kolonu için dosyanızdaki ilgili başlığı seçin.",
+    "importColumn": "İçe Aktarma Kolonu",
+    "excelColumn": "Excel Başlığı",
+    "notMapped": "(Eşleştirme yok)",
+    "requiredMissing": "Zorunlu kolonlar eşleştirilmedi: {columns}",
+    "samplePreview": "Örnek Satırlar",
+    "validate": "Doğrula",
+    "totalRowsLabel": "Toplam Satır",
+    "validRows": "Geçerli Satır",
+    "errorRows": "Hatalı Satır",
+    "successRows": "Aktarılan Satır",
+    "errorsSkipped": "Hatalı satırlar atlanacak, yalnızca geçerli satırlar aktarılacaktır.",
+    "row": "Satır",
+    "column": "Kolon",
+    "message": "Mesaj",
+    "backToMapping": "Eşleştirmeye Dön",
+    "commit": "{count} Satırı Aktar",
+    "done": "İçe aktarma tamamlandı",
+    "importAnother": "Yeni Dosya Aktar"
+  },
+  "audit": {
+    "date": "Tarih",
+    "user": "Kullanıcı",
+    "action": "İşlem",
+    "entity": "Varlık",
+    "entityId": "Varlık ID",
+    "empty": "Kayıt bulunamadı."
+  },
+  "settings": {
+    "companyCode": "Şirket Kodu",
+    "companyName": "Şirket Adı",
+    "defaultLocale": "Varsayılan Dil",
+    "timezone": "Saat Dilimi",
+    "primaryColor": "Ana Renk"
+  },
+  "apiKeys": {
+    "new": "Yeni API Anahtarı",
+    "prefix": "Önek",
+    "expiresAt": "Son Kullanma",
+    "lastUsed": "Son Kullanım",
+    "revoked": "İptal edildi",
+    "revoke": "İptal Et",
+    "revokeConfirm": "\"{name}\" anahtarı iptal edilecek ve kullanılamaz hale gelecek.",
+    "empty": "API anahtarı yok.",
+    "permissions": "İzinler",
+    "createdTitle": "API Anahtarı Oluşturuldu",
+    "onceWarning": "Bu anahtar yalnızca bir kez gösterilir. Şimdi kopyalayıp güvenli bir yere kaydedin.",
+    "usageNote": "Power BI / Excel / Power Automate: isteklerde x-api-key başlığını kullanın.",
+    "never": "Hiç"
+  },
+  "permGroup": {
+    "tenant": "Şirket Yönetimi",
+    "action": "Aksiyon",
+    "kpi": "KPI",
+    "meeting": "Toplantı",
+    "strategy": "Strateji",
+    "hoshin": "Hoshin",
+    "problem": "Problem Çözme",
+    "audit": "5S / TPM Denetim",
+    "suggestion": "Öneri / Kaizen"
+  },
+  "perm": {
+    "tenant": {
+      "settings": "Şirket ayarlarını yönet"
+    },
+    "user": {
+      "manage": "Kullanıcıları yönet"
+    },
+    "role": {
+      "manage": "Rolleri yönet"
+    },
+    "org": {
+      "manage": "Organizasyonu yönet",
+      "view": "Organizasyonu görüntüle"
+    },
+    "employee": {
+      "manage": "Personeli yönet"
+    },
+    "auditlog": {
+      "view": "Denetim izini görüntüle"
+    },
+    "apikey": {
+      "manage": "API anahtarlarını yönet"
+    },
+    "import": {
+      "run": "Excel içe aktarma"
+    },
+    "action": {
+      "viewAll": "Tüm aksiyonları gör",
+      "manage": "Aksiyonları yönet"
+    },
+    "kpi": {
+      "view": "KPI görüntüle",
+      "manage": "KPI yönet",
+      "value": {
+        "enter": "KPI değeri gir"
+      },
+      "deviation": {
+        "approve": "KPI sapmasını onayla"
+      }
+    },
+    "meeting": {
+      "view": "Toplantı görüntüle",
+      "manage": "Toplantı yönet"
+    },
+    "strategy": {
+      "view": "Strateji görüntüle",
+      "manage": "Strateji yönet"
+    },
+    "hoshin": {
+      "view": "Hoshin görüntüle",
+      "manage": "Hoshin yönet"
+    },
+    "problem": {
+      "view": "Problem görüntüle",
+      "create": "Problem aç",
+      "manage": "Problem yönet"
+    },
+    "audit": {
+      "view": "Denetim görüntüle",
+      "perform": "Denetim yap",
+      "manage": "Denetim yönet"
+    },
+    "suggestion": {
+      "create": "Öneri oluştur",
+      "evaluate": "Öneri değerlendir",
+      "manage": "Öneri yönet"
+    }
+  }
+}

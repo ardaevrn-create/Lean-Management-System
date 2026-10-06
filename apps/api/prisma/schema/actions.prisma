@@ -1,0 +1,147 @@
+// ---------- Merkezi Aksiyon Yönetimi ----------
+
+enum ActionStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
+  VERIFIED
+  CANCELLED
+}
+
+enum ActionSourceType {
+  MANUAL
+  MEETING
+  KPI_DEVIATION
+  PROBLEM
+  AUDIT_FINDING
+  HOSHIN
+  SUGGESTION
+  KAIZEN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Action {
+  id              String           @id @default(cuid())
+  tenantId        String
+  number          Int
+  title           String
+  description     String?
+  sourceType      ActionSourceType @default(MANUAL)
+  sourceId        String?
+  sourceLabel     String?
+  orgUnitId       String?
+  ownerId         String
+  createdById     String
+  priority        Priority         @default(MEDIUM)
+  status          ActionStatus     @default(OPEN)
+  startDate       DateTime?        @db.Date
+  dueDate         DateTime         @db.Date
+  originalDueDate DateTime         @db.Date
+  progress        Int              @default(0)
+  completedAt     DateTime?
+  completionNote  String?
+  verifiedAt      DateTime?
+  verifiedById    String?
+  deletedAt       DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  owner           User                   @relation("ActionOwner", fields: [ownerId], references: [id])
+  createdBy       User                   @relation("ActionCreatedBy", fields: [createdById], references: [id])
+  verifiedBy      User?                  @relation("ActionVerifiedBy", fields: [verifiedById], references: [id])
+  orgUnit         OrgUnit?               @relation(fields: [orgUnitId], references: [id])
+  supporters      ActionSupporter[]
+  history         ActionHistory[]
+  comments        ActionComment[]
+  dueDateRequests ActionDueDateRequest[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, ownerId, status])
+  @@index([tenantId, sourceType, sourceId])
+  @@index([tenantId, dueDate])
+}
+
+model ActionSupporter {
+  id       String @id @default(cuid())
+  tenantId String
+  actionId String
+  userId   String
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([actionId, userId])
+  @@index([tenantId, userId])
+}
+
+enum ActionHistoryType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+  DUE_DATE_CHANGED
+  OWNER_CHANGED
+  PROGRESS
+}
+
+model ActionHistory {
+  id        String            @id @default(cuid())
+  tenantId  String
+  actionId  String
+  userId    String?
+  type      ActionHistoryType
+  fromValue String?
+  toValue   String?
+  note      String?
+  createdAt DateTime          @default(now())
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, actionId])
+}
+
+model ActionComment {
+  id        String   @id @default(cuid())
+  tenantId  String
+  actionId  String
+  userId    String
+  body      String
+  createdAt DateTime @default(now())
+
+  action Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, actionId])
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ActionDueDateRequest {
+  id            String        @id @default(cuid())
+  tenantId      String
+  actionId      String
+  requestedById String
+  newDueDate    DateTime      @db.Date
+  reason        String
+  status        RequestStatus @default(PENDING)
+  decidedById   String?
+  decidedAt     DateTime?
+  decisionNote  String?
+  createdAt     DateTime      @default(now())
+
+  action      Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  requestedBy User   @relation("DueDateRequestedBy", fields: [requestedById], references: [id])
+  decidedBy   User?  @relation("DueDateDecidedBy", fields: [decidedById], references: [id])
+
+  @@index([tenantId, actionId])
+}
