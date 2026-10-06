@@ -18,6 +18,7 @@ import { UsersService } from '../src/core/users/users.service';
 import { hashPassword } from '../src/core/auth/auth.service';
 import { seedMeetings } from './seed-meetings';
 import { seedKpis } from './seed-kpi';
+import { seedProblems } from './seed-problems';
 
 const DEMO_PASSWORD = 'Demo1234!';
 
@@ -113,6 +114,7 @@ async function main() {
     await seedMeetings(app, { byNo, units: { fabrika: fabrika.id, uretim: uretim.id, hat1: hat1.id, kalite: kalite.id } });
     // KPI demo verisi (tanım, hedef, değer, sapma + aksiyon, bilerek eksik girişler)
     await seedKpis(app, { byNo, units: { hat1: hat1.id, hat2: hat2.id, kalite: kalite.id }, day });
+    await seedProblems(app, { byNo });
   });
 
   console.log('Seed tamamlandı.');

@@ -1,0 +1,229 @@
+// ---------- Problem Çözme / Düzeltici Faaliyet (M5 - DÖF) ----------
+
+enum ProblemSource {
+  CUSTOMER_COMPLAINT
+  INTERNAL_AUDIT
+  EXTERNAL_AUDIT
+  PROCESS
+  SUPPLIER
+  KPI_DEVIATION
+  AUDIT_FINDING
+  MEETING
+  SUGGESTION
+  SAFETY
+  OTHER
+}
+
+enum ProblemSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+/// Yalnızca rapor yerleşimini etkiler
+enum ProblemMethod {
+  BASIC
+  EIGHT_D
+  A3
+}
+
+enum ProblemPhase {
+  DEFINITION
+  CONTAINMENT
+  ROOT_CAUSE
+  ACTIONS
+  VERIFICATION
+  CLOSED
+  CANCELLED
+}
+
+enum ProblemCauseCategory {
+  MAN
+  MACHINE
+  METHOD
+  MATERIAL
+  MEASUREMENT
+  ENVIRONMENT
+}
+
+enum ProblemActionKind {
+  CONTAINMENT
+  CORRECTIVE
+  PREVENTIVE
+  HORIZONTAL
+}
+
+enum ProblemVerificationResult {
+  EFFECTIVE
+  NOT_EFFECTIVE
+}
+
+model Problem {
+  id                    String          @id @default(cuid())
+  tenantId              String
+  number                Int
+  title                 String
+  description           String?
+  source                ProblemSource   @default(OTHER)
+  sourceId              String?
+  sourceLabel           String?
+  orgUnitId             String
+  severity              ProblemSeverity @default(MEDIUM)
+  method                ProblemMethod   @default(BASIC)
+  phase                 ProblemPhase    @default(DEFINITION)
+  ownerId               String
+  reportedById          String
+  // 5N1K
+  what                  String?
+  whereText             String?
+  occurredAt            DateTime?
+  who                   String?
+  how                   String?
+  howMuch               String?
+  isNot                 String?
+  customerName          String?
+  customerRef           String?
+  costImpact            Decimal?        @db.Decimal(18, 2)
+  // Acil önlem
+  containment           String?
+  containmentNotNeeded  Boolean         @default(false)
+  containmentSkipReason String?
+  targetCloseDate       DateTime?       @db.Date
+  /// Planlanan etkinlik doğrulama tarihi
+  verificationDate      DateTime?       @db.Date
+  closedAt              DateTime?
+  cancelReason          String?
+  deletedAt             DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  orgUnit       OrgUnit               @relation(fields: [orgUnitId], references: [id])
+  owner         User                  @relation("ProblemOwner", fields: [ownerId], references: [id])
+  reportedBy    User                  @relation("ProblemReporter", fields: [reportedById], references: [id])
+  members       ProblemMember[]
+  causes        ProblemCause[]
+  whyChains     ProblemWhyChain[]
+  actionLinks   ProblemAction[]
+  verifications ProblemVerification[]
+  history       ProblemHistory[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, phase])
+  @@index([tenantId, orgUnitId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, reportedById])
+}
+
+model ProblemMember {
+  id        String  @id @default(cuid())
+  tenantId  String
+  problemId String
+  userId    String
+  role      String?
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user    User    @relation("ProblemMemberUser", fields: [userId], references: [id])
+
+  @@unique([problemId, userId])
+  @@index([tenantId, userId])
+}
+
+model ProblemCause {
+  id          String               @id @default(cuid())
+  tenantId    String
+  problemId   String
+  category    ProblemCauseCategory
+  text        String
+  parentId    String?
+  isCandidate Boolean              @default(false)
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+
+  problem  Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  parent   ProblemCause?    @relation("ProblemCauseTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children ProblemCause[]   @relation("ProblemCauseTree")
+  chain    ProblemWhyChain?
+
+  @@index([tenantId, problemId])
+}
+
+model ProblemWhyChain {
+  id        String   @id @default(cuid())
+  tenantId  String
+  problemId String
+  causeId   String   @unique
+  rootCause String?
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  problem Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  cause   ProblemCause     @relation(fields: [causeId], references: [id], onDelete: Cascade)
+  steps   ProblemWhyStep[]
+  actions ProblemAction[]
+
+  @@index([tenantId, problemId])
+}
+
+model ProblemWhyStep {
+  id       String  @id @default(cuid())
+  tenantId String
+  chainId  String
+  order    Int
+  question String?
+  answer   String
+
+  chain ProblemWhyChain @relation(fields: [chainId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, chainId])
+}
+
+model ProblemAction {
+  id               String            @id @default(cuid())
+  tenantId         String
+  problemId        String
+  /// Çekirdek Action kaydı (FK yok; aksiyonlar ActionsService ile yönetilir)
+  actionId         String
+  kind             ProblemActionKind
+  rootCauseChainId String?
+  createdAt        DateTime          @default(now())
+
+  problem Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  chain   ProblemWhyChain? @relation(fields: [rootCauseChainId], references: [id], onDelete: SetNull)
+
+  @@unique([problemId, actionId])
+  @@index([tenantId, problemId])
+}
+
+model ProblemVerification {
+  id           String                    @id @default(cuid())
+  tenantId     String
+  problemId    String
+  plannedDate  DateTime?                 @db.Date
+  result       ProblemVerificationResult
+  note         String?
+  verifiedById String
+  verifiedAt   DateTime                  @default(now())
+
+  problem    Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  verifiedBy User    @relation("ProblemVerifier", fields: [verifiedById], references: [id])
+
+  @@index([tenantId, problemId])
+}
+
+model ProblemHistory {
+  id        String        @id @default(cuid())
+  tenantId  String
+  problemId String
+  fromPhase ProblemPhase?
+  toPhase   ProblemPhase
+  userId    String
+  note      String?
+  createdAt DateTime      @default(now())
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user    User    @relation("ProblemHistoryUser", fields: [userId], references: [id])
+
+  @@index([tenantId, problemId])
+}

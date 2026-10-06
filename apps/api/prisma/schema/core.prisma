@@ -70,6 +70,13 @@ model User {
   kpiDeviationsDecided    KpiDeviation[]       @relation("KpiDeviationDecidedBy")
   kpiDeviationsCreated    KpiDeviation[]       @relation("KpiDeviationCreatedBy")
 
+  // Problems
+  ownedProblems        Problem[]             @relation("ProblemOwner")
+  reportedProblems     Problem[]             @relation("ProblemReporter")
+  problemMemberships   ProblemMember[]       @relation("ProblemMemberUser")
+  problemVerifications ProblemVerification[] @relation("ProblemVerifier")
+  problemHistory       ProblemHistory[]      @relation("ProblemHistoryUser")
+
   @@unique([tenantId, username])
   @@index([tenantId])
 }
@@ -126,6 +133,9 @@ model OrgUnit {
   // Meetings
   meetingTypes MeetingType[]
   meetings     Meeting[]
+
+  // Problems
+  problems Problem[]
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])
