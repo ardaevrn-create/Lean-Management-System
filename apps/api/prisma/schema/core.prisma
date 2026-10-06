@@ -63,6 +63,13 @@ model User {
   meetingParticipations   MeetingParticipant[] @relation("MeetingParticipantUser")
   presentedAgendaItems    MeetingAgendaItem[]  @relation("MeetingAgendaPresenter")
 
+  // Problems
+  ownedProblems        Problem[]             @relation("ProblemOwner")
+  reportedProblems     Problem[]             @relation("ProblemReporter")
+  problemMemberships   ProblemMember[]       @relation("ProblemMemberUser")
+  problemVerifications ProblemVerification[] @relation("ProblemVerifier")
+  problemHistory       ProblemHistory[]      @relation("ProblemHistoryUser")
+
   @@unique([tenantId, username])
   @@index([tenantId])
 }
@@ -117,6 +124,9 @@ model OrgUnit {
   // Meetings
   meetingTypes MeetingType[]
   meetings     Meeting[]
+
+  // Problems
+  problems Problem[]
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])

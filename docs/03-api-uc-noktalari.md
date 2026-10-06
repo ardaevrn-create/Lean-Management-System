@@ -124,3 +124,33 @@ Yetki: `meeting.view` / `meeting.manage` (birim kapsamlı). Organizatör, katıl
 | PATCH | `/meetings/series/:seriesId` | `{ action: "CANCEL", reason? }` | `{ cancelled }` — serideki gelecekteki planlı toplantılar iptal edilir |
 
 Pano kartı: `GET /dashboard/me` → `widgets.meetings = { upcoming[5], todayCount, minutesPending }`. Zamanlanmış iş: her gün 07:15 (Europe/Istanbul) bugünkü toplantı hatırlatmaları ve dün biten, tutanağı tamamlanmamış toplantılar için organizatör uyarısı.
+
+## Problem Çözme (M5 — DÖF)
+
+Akış: Tanım → Acil Önlem → Kök Neden → Aksiyonlar → Doğrulama → Kapanış (+ İptal). Balık kılçığı ve 5 Neden zorunludur. Numara `PRB-00001`. Aksiyonlar çekirdek `ActionsService` ile `sourceType=PROBLEM`, `sourceId=problem.id` olarak açılır.
+Erişim: bildiren, sahip ve ekip üyeleri kendi problemlerini her zaman görür; diğerleri `problem.view`/`problem.manage` kapsamına göre. Düzenleme/ilerletme: sahip, ekip üyesi, `problem.manage`; kapatma/geri alma/iptal: sahip veya `problem.manage`. `POST /problems` için `problem.create` yeterlidir (her çalışan).
+
+| Yöntem | Yol | İstek | Yanıt |
+|---|---|---|---|
+| GET | `/problems` | `view=mine\|all, phase(csv), source, severity, orgUnitId (alt ağaç), overdue, open, q, page, pageSize, sort` | `Paginated<ProblemListItem>` |
+| POST | `/problems` | `{ title, description?, orgUnitId? (boşsa bildirenin birimi), severity?, source?, sourceId?, sourceLabel? }` | `ProblemDetail` (sahip: birim yöneticisi → bildirenin yöneticisi → bildiren) |
+| GET | `/problems/:id` | | `ProblemDetail` (tanım, ekip, nedenler, 5 Neden zincirleri, aksiyonlar, doğrulamalar, geçmiş, `gate {nextPhase, canAdvance, missing[]}`, `can`) |
+| PATCH | `/problems/:id` | 5N1K, `severity, method, source, orgUnitId, ownerId, containment*, targetCloseDate, verificationDate, customer*, costImpact` | `ProblemDetail` |
+| PUT | `/problems/:id/team` | `{ members:[{userId, role?}] }` | `ProblemDetail` |
+| POST | `/problems/:id/causes` | `{ category: MAN\|MACHINE\|METHOD\|MATERIAL\|MEASUREMENT\|ENVIRONMENT, text, parentId?, isCandidate? }` | `ProblemDetail` |
+| PATCH / DELETE | `/problems/:id/causes/:causeId` | `{ text?, isCandidate?, category?, sortOrder? }` (adaylık kalkınca 5 Neden zinciri silinir) | `ProblemDetail` |
+| POST | `/problems/:id/why-chains` | `{ causeId }` (yalnız aday neden; `NOT_CANDIDATE`) | `ProblemDetail` |
+| PATCH / DELETE | `/problems/:id/why-chains/:chainId` | `{ rootCause?, confirmed? }` | `ProblemDetail` |
+| PUT | `/problems/:id/why-chains/:chainId/steps` | `{ steps:[{question?, answer}] }` (tam sıralı liste) | `ProblemDetail` — zincir ≥3 dolu neden + kök neden ile tamamlanır |
+| POST | `/problems/:id/actions` | `{ kind: CONTAINMENT\|CORRECTIVE\|PREVENTIVE\|HORIZONTAL, rootCauseChainId?, title, ownerId, dueDate, ... }` | `ProblemDetail` |
+| POST | `/problems/:id/horizontal` | `{ orgUnitIds[], title, dueDate, ownerId (yedek sorumlu), rootCauseChainId? }` | Her birim için HORIZONTAL aksiyon (sorumlu birim yöneticisi) |
+| POST | `/problems/:id/phase` | `{ to, note? }` — yalnız bir sonraki ya da bir önceki faz | `ProblemDetail`; kapı ihlali `422` + kod |
+| POST | `/problems/:id/verifications` | `{ result: EFFECTIVE\|NOT_EFFECTIVE, note?, plannedDate? }` (yalnız VERIFICATION fazı; `NOT_EFFECTIVE` → ROOT_CAUSE'a döner) | `ProblemDetail` |
+| POST | `/problems/:id/cancel` | `{ reason }` | `ProblemDetail` |
+| GET | `/problems/stats` | `view, orgUnitId` | `ProblemStats` (faz/şiddet/kaynak kırılımı, geciken, doğrulama bekleyen, ort. kapanış günü, 6M Pareto) |
+| GET | `/problems/export` | `/problems` filtreleri | `.xlsx` |
+| GET | `/problems/:id/report` | | `ProblemReport` (8D D1–D8 / DÖF yazdırma verisi) |
+
+Faz kapıları (422 `code`): `DEFINITION_INCOMPLETE` (ne/nerede/ne zaman), `CONTAINMENT_REQUIRED`, `FISHBONE_REQUIRED` (≥2 kategoride neden + ≥1 aday), `FIVE_WHY_REQUIRED`, `ROOT_CAUSE_UNADDRESSED`, `CORRECTIVE_REQUIRED`, `ACTIONS_OPEN`, `VERIFICATION_REQUIRED`; ayrıca `INVALID_TRANSITION`, `PROBLEM_LOCKED`, `INVALID_PHASE`, `INVALID_CHAIN`. `details.missing` tüm eksik kodları verir.
+Pano kartı: `widgets.problems = { myOpen, overdue, awaitingVerification }`. Zamanlanmış iş: her gün 07:45 (Europe/Istanbul) hedef kapanışı geçen problemler (haftalık tekilleştirilmiş) ve planlanan doğrulama tarihi gelen problemler için sahibine bildirim. Aksiyon durumu değişince tüm düzeltici aksiyonlar bittiyse sahibe "Doğrulamaya hazır" bildirimi gider.
+Diğer modüllerden önceden doldurulmuş bildirim: `/problems?new=1&source=KPI_DEVIATION&sourceId=..&sourceLabel=..&orgUnitId=..`.

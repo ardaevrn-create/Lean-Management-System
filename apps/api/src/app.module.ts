@@ -12,6 +12,7 @@ import { SharedServicesModule } from './core/shared-services.module';
 import { TenantsModule } from './core/tenants/tenants.module';
 import { UsersModule } from './core/users/users.module';
 import { MeetingsModule } from './modules/meetings/meetings.module';
+import { ProblemsModule } from './modules/problems/problems.module';
 
 @Controller('health')
 class HealthController {
@@ -36,6 +37,7 @@ class HealthController {
     ActionsModule,
     DashboardModule,
     MeetingsModule,
+    ProblemsModule,
     // İş modülleri (Faz 1+): KpiModule, MeetingsModule, ...
   ],
   controllers: [HealthController],

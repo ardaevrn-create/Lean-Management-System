@@ -39,7 +39,7 @@ export const NAV: NavGroup[] = [
       { href: "/kpi", labelKey: "nav.kpi", icon: Gauge, permission: "kpi.view" },
       { href: "/meetings", labelKey: "nav.meetings", icon: CalendarDays, permission: "meeting.view" },
       { href: "/hoshin", labelKey: "nav.hoshin", icon: Target, permission: "hoshin.view" },
-      { href: "/problems", labelKey: "nav.problems", icon: Puzzle, permission: "problem.view" },
+      { href: "/problems", labelKey: "nav.problems", icon: Puzzle, permission: "problem.create" },
       { href: "/audits", labelKey: "nav.audits", icon: ClipboardCheck, permission: "audit.view" },
       { href: "/suggestions", labelKey: "nav.suggestions", icon: Lightbulb, permission: "suggestion.create" },
     ],
