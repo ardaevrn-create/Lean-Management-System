@@ -3,12 +3,20 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import tr from "@/messages/tr.json";
 import en from "@/messages/en.json";
+// Modül çevirileri ayrı dosyalarda tutulur (paralel geliştirmede çakışmayı önler); modül adı anahtarı altında birleşir.
+import kpiTr from "@/messages/modules/kpi.tr.json";
+import kpiEn from "@/messages/modules/kpi.en.json";
+import meetingsTr from "@/messages/modules/meetings.tr.json";
+import meetingsEn from "@/messages/modules/meetings.en.json";
 
 export type Locale = "tr" | "en";
 const LOCALE_KEY = "lean.locale";
 
 type Messages = Record<string, unknown>;
-const catalogs: Record<Locale, Messages> = { tr, en };
+const catalogs: Record<Locale, Messages> = {
+  tr: { ...tr, kpiModule: kpiTr, meetingsModule: meetingsTr },
+  en: { ...en, kpiModule: kpiEn, meetingsModule: meetingsEn },
+};
 
 function lookup(messages: Messages, key: string): string | undefined {
   let cur: unknown = messages;
