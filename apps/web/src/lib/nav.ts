@@ -39,7 +39,8 @@ export const NAV: NavGroup[] = [
       // KPI: veri giriş sorumluları kpi.view olmadan da kendi KPI'larını görür; veri kapsamı API'da uygulanır
       { href: "/kpi", labelKey: "nav.kpi", icon: Gauge },
       { href: "/meetings", labelKey: "nav.meetings", icon: CalendarDays, permission: "meeting.view" },
-      { href: "/hoshin", labelKey: "nav.hoshin", icon: Target, permission: "hoshin.view" },
+      // Hoshin: hedef sahipleri hoshin.view olmadan da kendi hedeflerini görür; veri kapsamı API'da uygulanır
+      { href: "/hoshin", labelKey: "nav.hoshin", icon: Target },
       { href: "/problems", labelKey: "nav.problems", icon: Puzzle, permission: "problem.create" },
       { href: "/audits", labelKey: "nav.audits", icon: ClipboardCheck, permission: "audit.view" },
       { href: "/suggestions", labelKey: "nav.suggestions", icon: Lightbulb, permission: "suggestion.create" },

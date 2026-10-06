@@ -71,11 +71,18 @@ model User {
   kpiDeviationsCreated    KpiDeviation[]       @relation("KpiDeviationCreatedBy")
 
   // Problems
-  ownedProblems        Problem[]             @relation("ProblemOwner")
-  reportedProblems     Problem[]             @relation("ProblemReporter")
-  problemMemberships   ProblemMember[]       @relation("ProblemMemberUser")
-  problemVerifications ProblemVerification[] @relation("ProblemVerifier")
-  problemHistory       ProblemHistory[]      @relation("ProblemHistoryUser")
+  ownedProblems            Problem[]              @relation("ProblemOwner")
+  reportedProblems         Problem[]              @relation("ProblemReporter")
+  problemMemberships       ProblemMember[]        @relation("ProblemMemberUser")
+  problemVerifications     ProblemVerification[]  @relation("ProblemVerifier")
+  problemHistory           ProblemHistory[]       @relation("ProblemHistoryUser")
+  // Strategy & Hoshin
+  strategyPlansApproved    StrategyPlan[]         @relation("StrategyPlanApprovedBy")
+  strategyPlansCreated     StrategyPlan[]         @relation("StrategyPlanCreatedBy")
+  strategicObjectivesOwned StrategicObjective[]   @relation("StrategicObjectiveOwner")
+  hoshinGoalsOwned         HoshinGoal[]           @relation("HoshinGoalOwner")
+  hoshinGoalsCreated       HoshinGoal[]           @relation("HoshinGoalCreatedBy")
+  hoshinCatchballEntries   HoshinCatchballEntry[] @relation("HoshinCatchballUser")
 
   @@unique([tenantId, username])
   @@index([tenantId])
@@ -135,7 +142,9 @@ model OrgUnit {
   meetings     Meeting[]
 
   // Problems
-  problems Problem[]
+  problems    Problem[]
+  // Strategy & Hoshin
+  hoshinGoals HoshinGoal[] @relation("HoshinGoalOrgUnit")
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])

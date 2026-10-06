@@ -14,6 +14,7 @@ import { UsersModule } from './core/users/users.module';
 import { MeetingsModule } from './modules/meetings/meetings.module';
 import { KpiModule } from './modules/kpi/kpi.module';
 import { ProblemsModule } from './modules/problems/problems.module';
+import { StrategyModule } from './modules/strategy/strategy.module';
 
 @Controller('health')
 class HealthController {
@@ -41,6 +42,7 @@ class HealthController {
     // İş modülleri
     KpiModule,
     ProblemsModule,
+    StrategyModule,
   ],
   controllers: [HealthController],
 })

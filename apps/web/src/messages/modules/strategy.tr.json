@@ -1,0 +1,262 @@
+{
+  "title": "Strateji & Hoshin",
+  "subtitle": "Stratejik plan, hedef dağıtımı (Hoshin Kanri), X-Matrix, bowling chart ve catchball",
+  "autoCode": "Boşsa otomatik",
+  "confirmDelete": "Bu kayıt silinecek. Emin misiniz?",
+  "tabs": {
+    "plan": "Stratejik Plan",
+    "tree": "Hedef Ağacı",
+    "xmatrix": "X-Matrix",
+    "bowling": "Bowling Chart",
+    "catchball": "Catchball",
+    "review": "Yıllık Değerlendirme"
+  },
+  "plan": {
+    "select": "Plan seç",
+    "create": "Yeni plan",
+    "edit": "Planı düzenle",
+    "defaultName": "Stratejik Planı",
+    "startYear": "Başlangıç yılı",
+    "endYear": "Bitiş yılı",
+    "vision": "Vizyon",
+    "mission": "Misyon",
+    "values": "Değerler",
+    "valuesHint": "Her satıra bir değer",
+    "activate": "Onayla ve aktif yap",
+    "activated": "Plan aktif edildi (önceki aktif plan arşivlendi)",
+    "newVersion": "Yeni versiyon",
+    "versionCreated": "Yeni versiyon taslak olarak oluşturuldu",
+    "approvedBy": "{name} tarafından onaylandı ({date})",
+    "none": "Henüz stratejik plan yok",
+    "noneDesc": "Strateji & Hoshin için önce bir plan oluşturulmalıdır.",
+    "noAccess": "Stratejik planı görüntüleme yetkiniz yok.",
+    "status": {
+      "DRAFT": "Taslak",
+      "ACTIVE": "Aktif",
+      "ARCHIVED": "Arşiv"
+    }
+  },
+  "swot": {
+    "title": "SWOT Analizi",
+    "empty": "Kayıt yok",
+    "item": "SWOT maddesi",
+    "impact": "Etki / önem (1–5)",
+    "STRENGTH": "Güçlü yönler",
+    "WEAKNESS": "Zayıf yönler",
+    "OPPORTUNITY": "Fırsatlar",
+    "THREAT": "Tehditler"
+  },
+  "objectives": {
+    "title": "Stratejik Amaçlar",
+    "add": "Amaç ekle",
+    "item": "Stratejik amaç",
+    "perspective": "Perspektif (BSC)",
+    "empty": "Bu perspektifte amaç yok",
+    "goalCount": "{n} hedef"
+  },
+  "perspective": {
+    "FINANCIAL": "Finansal",
+    "CUSTOMER": "Müşteri",
+    "INTERNAL_PROCESS": "İç süreçler",
+    "LEARNING_GROWTH": "Öğrenme ve gelişim",
+    "NONE": "Perspektifsiz"
+  },
+  "level": {
+    "BREAKTHROUGH": "Atılım hedefi",
+    "ANNUAL": "Yıllık hedef",
+    "PRIORITY": "Öncelik / proje",
+    "DEPARTMENT": "Birim hedefi",
+    "INDIVIDUAL": "Bireysel hedef"
+  },
+  "status": {
+    "DRAFT": "Taslak",
+    "PROPOSED": "Önerildi",
+    "IN_CATCHBALL": "Catchball",
+    "AGREED": "Mutabık",
+    "ACTIVE": "Aktif",
+    "COMPLETED": "Tamamlandı",
+    "CANCELLED": "İptal"
+  },
+  "color": {
+    "GREEN": "Hedefte",
+    "YELLOW": "Uyarı",
+    "RED": "Hedef altı",
+    "NO_DATA": "Veri yok"
+  },
+  "direction": {
+    "HIGHER_BETTER": "Yüksek iyi",
+    "LOWER_BETTER": "Düşük iyi"
+  },
+  "aggregation": {
+    "SUM": "Toplam",
+    "AVERAGE": "Ortalama",
+    "LAST": "Son değer",
+    "MIN": "En düşük",
+    "MAX": "En yüksek"
+  },
+  "source": {
+    "KPI": "KPI verisi",
+    "MANUAL": "Elle takip",
+    "ROLLUP": "Alt hedeflerden",
+    "NONE": "Ölçüm yok"
+  },
+  "strength": {
+    "STRONG": "Güçlü",
+    "MEDIUM": "Orta",
+    "WEAK": "Zayıf"
+  },
+  "role": {
+    "RESPONSIBLE": "Sorumlu",
+    "SUPPORT": "Destek"
+  },
+  "roleShort": {
+    "RESPONSIBLE": "S",
+    "SUPPORT": "D"
+  },
+  "months": {
+    "01": "Oca",
+    "02": "Şub",
+    "03": "Mar",
+    "04": "Nis",
+    "05": "May",
+    "06": "Haz",
+    "07": "Tem",
+    "08": "Ağu",
+    "09": "Eyl",
+    "10": "Eki",
+    "11": "Kas",
+    "12": "Ara"
+  },
+  "field": {
+    "title": "Başlık",
+    "level": "Seviye",
+    "year": "Yıl",
+    "targetYear": "Hedef yıl",
+    "objective": "Stratejik amaç",
+    "owner": "Sahip",
+    "orgUnit": "Birim",
+    "kpi": "Ölçüm KPI'ı",
+    "noKpi": "KPI yok (elle takip)",
+    "kpiHint": "Plan = KPI hedefi, gerçekleşme = KPI değeri. Yön, birim ve toplulaştırma KPI'dan alınır.",
+    "baseline": "Başlangıç değeri",
+    "target": "Hedef değer",
+    "unit": "Ölçü birimi",
+    "weight": "Ağırlık",
+    "direction": "Yön",
+    "aggregation": "Yıl içi toplulaştırma",
+    "aggregationHint": "YTD hesabı için (toplam / ortalama / son değer)",
+    "startDate": "Başlangıç tarihi",
+    "endDate": "Bitiş tarihi"
+  },
+  "goal": {
+    "add": "Hedef ekle",
+    "addChild": "{code} altına hedef ekle",
+    "addChildShort": "Alt hedef",
+    "edit": "Hedefi düzenle",
+    "startCatchball": "Catchball başlat (sahibine öner)",
+    "startCatchballHint": "Hedef sahibine öneri gönderilir; karşı öneri / mutabakat sonrası aktifleştirilir.",
+    "notFound": "Hedef bulunamadı veya erişim yetkiniz yok",
+    "complete": "Tamamla",
+    "cancel": "İptal et",
+    "cancelConfirm": "Hedef iptal edilecek. Emin misiniz?",
+    "source": "Ölçüm kaynağı",
+    "bowling": "Bowling",
+    "children": "Alt hedefler",
+    "noChildren": "Alt hedef yok",
+    "catchball": "Catchball",
+    "actions": "Aksiyonlar",
+    "addAction": "Aksiyon ekle"
+  },
+  "tree": {
+    "expandAll": "Tümünü aç",
+    "collapseAll": "Tümünü kapat",
+    "empty": "Bu yıl için hedef yok",
+    "emptyDesc": "Atılım ve yıllık hedefler ekleyerek hedef ağacını oluşturun.",
+    "manual": "Elle",
+    "unitSummary": "Birim özeti (birim hedefleri)"
+  },
+  "xmatrix": {
+    "north": "Öncelikler",
+    "south": "Atılım hedefleri",
+    "west": "Yıllık hedefler",
+    "east": "Ölçüler (KPI)",
+    "print": "Yazdır",
+    "clickHint": "Hücreye tıklayarak ilişki gücünü değiştirin",
+    "empty": "X-Matrix için hedef yok",
+    "emptyDesc": "Seçili yıl için atılım hedefi, yıllık hedef ve öncelik ekleyin."
+  },
+  "bowling": {
+    "goal": "Hedef",
+    "plan": "Plan",
+    "actual": "Gerçekleşen",
+    "ytd": "YTD",
+    "achievement": "Gerçekleşme",
+    "editActuals": "Aylık verileri düzenle",
+    "measuredOnly": "Yalnız ölçümü olanlar",
+    "hint": "Hücre: üstte plan, altta gerçekleşen. Kırmızı/sarı bir aya tıklayarak açıklama ve karşı önlemleri görün.",
+    "empty": "Gösterilecek hedef yok"
+  },
+  "offTarget": {
+    "kpiDeviation": "KPI sapma açıklaması",
+    "rootCause": "Kök neden",
+    "openKpi": "KPI sapmalarını aç",
+    "noDeviation": "Bu ay için KPI sapma açıklaması girilmemiş.",
+    "explanation": "Hedef altı açıklaması",
+    "explanationHint": "Gerçekleşme neden hedefin altında kaldı?",
+    "actions": "Karşı önlem aksiyonları",
+    "noActions": "Aksiyon yok",
+    "addCountermeasure": "Karşı önlem aksiyonu ekle",
+    "actionTitle": "Aksiyon",
+    "dueDate": "Termin",
+    "priority": "Öncelik",
+    "createAction": "Aksiyon oluştur",
+    "created": "Aksiyon oluşturuldu"
+  },
+  "catchball": {
+    "list": "Catchball bekleyen hedefler",
+    "empty": "Catchball sürecinde hedef yok",
+    "emptyDesc": "Size önerilen veya sizin önerdiğiniz hedefler burada görünür.",
+    "awaitingMe": "Yanıtınız bekleniyor",
+    "noEntries": "Henüz yazışma yok",
+    "proposedTarget": "Önerilen hedef",
+    "message": "Mesaj",
+    "propose": "Öner",
+    "comment": "Yorum",
+    "counter": "Karşı öner",
+    "reject": "Reddet",
+    "agree": "Mutabıkım",
+    "activate": "Aktifleştir",
+    "activated": "Hedef aktifleştirildi",
+    "agreedInfo": "Mutabakat sağlandı; hedef değer {target}. Aktifleştirme bekleniyor.",
+    "type": {
+      "PROPOSAL": "Öneri",
+      "COMMENT": "Yorum",
+      "COUNTER_PROPOSAL": "Karşı öneri",
+      "AGREEMENT": "Mutabakat",
+      "REJECTION": "Red"
+    },
+    "side": {
+      "PARENT": "Üst hedef tarafı",
+      "CHILD": "Atanan taraf"
+    }
+  },
+  "review": {
+    "title": "{year} Hoshin Yıllık Değerlendirme",
+    "goals": "Hedef",
+    "avgAchievement": "Ort. gerçekleşme",
+    "openActions": "Açık aksiyon",
+    "overdueActions": "Geciken aksiyon",
+    "ytdPlan": "YTD plan",
+    "ytdActual": "YTD gerçekleşen",
+    "agreedAt": "Mutabakat tarihi",
+    "printView": "Yazdırılabilir görünüm",
+    "empty": "Değerlendirilecek hedef yok"
+  },
+  "widget": {
+    "title": "Hoshin hedeflerim",
+    "myGoals": "Hedeflerim",
+    "redGoals": "Hedef altı",
+    "catchballPending": "Yanıt bekleyen",
+    "waiting": "{n} catchball yanıtınızı bekliyor"
+  }
+}
