@@ -12,6 +12,7 @@ import { Card, CardBody, CardHeader, EmptyState, LoadingBlock, PageHeader, Prior
 import { DueDateCell } from "@/components/action-bits";
 import { UpcomingMeetingsCard } from "@/components/meetings/upcoming-meetings-card";
 import { ProblemsDashboardCard } from "@/components/problems/problems-panels";
+import { AuditsDashboardCard } from "@/components/audits/audits-dashboard-card";
 
 function StatCard({ label, value, icon, tone, href }: { label: string; value: number; icon: React.ReactNode; tone: string; href: string }) {
   return (
@@ -130,6 +131,7 @@ export default function HomePage() {
           </Card>
           <UpcomingMeetingsCard widget={data.widgets.meetings} />
           <ProblemsDashboardCard widget={data.widgets.problems} />
+          <AuditsDashboardCard widget={data.widgets.audits} />
         </div>
       )}
     </>

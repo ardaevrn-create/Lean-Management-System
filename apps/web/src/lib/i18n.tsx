@@ -10,14 +10,16 @@ import meetingsTr from "@/messages/modules/meetings.tr.json";
 import meetingsEn from "@/messages/modules/meetings.en.json";
 import problemsTr from "@/messages/modules/problems.tr.json";
 import problemsEn from "@/messages/modules/problems.en.json";
+import auditsTr from "@/messages/modules/audits.tr.json";
+import auditsEn from "@/messages/modules/audits.en.json";
 
 export type Locale = "tr" | "en";
 const LOCALE_KEY = "lean.locale";
 
 type Messages = Record<string, unknown>;
 const catalogs: Record<Locale, Messages> = {
-  tr: { ...tr, kpiModule: kpiTr, meetingsModule: meetingsTr, problemsModule: problemsTr },
-  en: { ...en, kpiModule: kpiEn, meetingsModule: meetingsEn, problemsModule: problemsEn },
+  tr: { ...tr, kpiModule: kpiTr, meetingsModule: meetingsTr, problemsModule: problemsTr, auditsModule: auditsTr },
+  en: { ...en, kpiModule: kpiEn, meetingsModule: meetingsEn, problemsModule: problemsEn, auditsModule: auditsEn },
 };
 
 function lookup(messages: Messages, key: string): string | undefined {
