@@ -194,7 +194,8 @@
       "saving": "Kaydediliyor...",
       "saved": "Kaydedildi",
       "error": "Kaydedilemedi"
-    }
+    },
+    "kpiBoard": "Birim KPI Panosu"
   },
   "print": {
     "back": "Toplantıya dön",

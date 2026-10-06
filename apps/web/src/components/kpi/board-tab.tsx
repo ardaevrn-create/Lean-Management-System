@@ -8,7 +8,7 @@ import { periodLabel, type KpiBoardItem, type KpiBoardResponse } from "@lean/sha
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { Button, Checkbox, EmptyState, LoadingBlock, OrgUnitSelect } from "@/components/ui";
+import { Button, Card, CardBody, CardHeader, Checkbox, EmptyState, LoadingBlock, OrgUnitSelect } from "@/components/ui";
 import { EntryStateBadge, formatKpiValue, Sparkline, STATUS_STYLE, statusOf, targetText } from "./kpi-bits";
 
 function BoardCard({ item, tv }: { item: KpiBoardItem; tv: boolean }) {
@@ -167,5 +167,35 @@ export function BoardTab() {
       {data && <Summary summary={data.summary} tv={false} />}
       {grid}
     </div>
+  );
+}
+
+/** Gömülü KPI panosu (ör. toplantı odasında birimin KPI'ları). Kart yoksa hiçbir şey göstermez. */
+export function KpiBoardPanel({ orgUnitId, title }: { orgUnitId: string; title: string }) {
+  const { t } = useI18n();
+  const { data } = useQuery({
+    queryKey: ["kpi", "board", orgUnitId, true],
+    queryFn: () => api.get<KpiBoardResponse>("/kpi/board", { orgUnitId, includeSub: true }),
+  });
+  if (!data || data.items.length === 0) return null;
+  return (
+    <Card>
+      <CardHeader
+        title={title}
+        actions={
+          <Link href="/kpi?tab=board" className="text-xs font-medium text-brand-600">
+            {t("kpiModule.board.openFull")}
+          </Link>
+        }
+      />
+      <CardBody className="space-y-3">
+        <Summary summary={data.summary} tv={false} />
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {data.items.map((i) => (
+            <BoardCard key={i.kpi.id} item={i} tv={false} />
+          ))}
+        </div>
+      </CardBody>
+    </Card>
   );
 }

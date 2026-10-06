@@ -231,7 +231,8 @@
     "exitFullscreen": "Tam ekrandan çık",
     "allUnits": "Tüm birimler",
     "empty": "Bu birimde gösterilecek KPI yok",
-    "updated": "Son güncelleme: {time}"
+    "updated": "Son güncelleme: {time}",
+    "openFull": "Tam panoyu aç"
   },
   "home": {
     "toEnter": "Girilecek KPI verisi",

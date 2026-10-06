@@ -231,7 +231,8 @@
     "exitFullscreen": "Exit full screen",
     "allUnits": "All units",
     "empty": "No KPIs to show for this unit",
-    "updated": "Last updated: {time}"
+    "updated": "Last updated: {time}",
+    "openFull": "Open full board"
   },
   "home": {
     "toEnter": "KPI values to enter",

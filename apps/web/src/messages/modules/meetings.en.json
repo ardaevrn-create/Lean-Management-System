@@ -194,7 +194,8 @@
       "saving": "Saving...",
       "saved": "Saved",
       "error": "Could not save"
-    }
+    },
+    "kpiBoard": "Unit KPI Board"
   },
   "print": {
     "back": "Back to meeting",

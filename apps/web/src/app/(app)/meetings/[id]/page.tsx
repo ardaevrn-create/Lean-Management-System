@@ -11,6 +11,7 @@ import { useI18n } from "@/lib/i18n";
 import { Badge, Button, Card, CardBody, ConfirmDialog, LoadingBlock } from "@/components/ui";
 import { useToast } from "@/components/ui/toast";
 import { AttachmentsPanel } from "@/components/attachments-panel";
+import { KpiBoardPanel } from "@/components/kpi/board-tab";
 import { fmtLongDate, fmtTime, MeetingStatusBadge, useTenantTz } from "@/components/meetings/meeting-bits";
 import { CancelMeetingDialog, EditMeetingDialog, ParticipantsDialog } from "@/components/meetings/meeting-dialogs";
 import {
@@ -173,6 +174,7 @@ export default function MeetingRoomPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           <AgendaPanel meeting={m} />
+          {m.orgUnit && <KpiBoardPanel orgUnitId={m.orgUnit.id} title={t("meetingsModule.room.kpiBoard")} />}
           <DecisionsPanel meeting={m} />
           <MeetingActionsPanel meeting={m} />
           <MinutesPanel key={m.status} meeting={m} />
