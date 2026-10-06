@@ -83,6 +83,19 @@ model User {
   hoshinGoalsOwned         HoshinGoal[]           @relation("HoshinGoalOwner")
   hoshinGoalsCreated       HoshinGoal[]           @relation("HoshinGoalCreatedBy")
   hoshinCatchballEntries   HoshinCatchballEntry[] @relation("HoshinCatchballUser")
+  // Suggestions & Kaizen
+  suggestionsSubmitted     Suggestion[]           @relation("SuggestionSubmitter")
+  suggestionsPreEvaluated  Suggestion[]           @relation("SuggestionPreEvaluator")
+  suggestionsImplemented   Suggestion[]           @relation("SuggestionImplementer")
+  suggestionMemberships    SuggestionMember[]     @relation("SuggestionMemberUser")
+  suggestionEvaluations    SuggestionEvaluation[] @relation("SuggestionEvaluator")
+  suggestionEvents         SuggestionEvent[]      @relation("SuggestionEventUser")
+  kaizensLed               Kaizen[]               @relation("KaizenLeader")
+  kaizensApproved          Kaizen[]               @relation("KaizenApprover")
+  kaizensCreated           Kaizen[]               @relation("KaizenCreator")
+  kaizenMemberships        KaizenMember[]         @relation("KaizenMemberUser")
+  kaizenGainsApproved      KaizenGain[]           @relation("KaizenGainFinanceApprover")
+  pointsLedger             PointsLedger[]         @relation("PointsLedgerUser")
 
   // Audits
   auditAreasResponsible AuditArea[]        @relation("AuditAreaResponsible")
@@ -157,6 +170,9 @@ model OrgUnit {
   problems    Problem[]
   // Strategy & Hoshin
   hoshinGoals HoshinGoal[] @relation("HoshinGoalOrgUnit")
+  // Suggestions & Kaizen
+  suggestions Suggestion[]
+  kaizens     Kaizen[]
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])

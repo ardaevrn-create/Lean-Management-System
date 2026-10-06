@@ -1,0 +1,287 @@
+// ---------- Öneri Sistemi & Kaizen (M7) ----------
+
+enum SuggestionCategory {
+  QUALITY
+  SAFETY
+  COST
+  PRODUCTIVITY
+  ENVIRONMENT
+  ERGONOMICS
+  CUSTOMER
+  OTHER
+}
+
+enum SuggestionStatus {
+  SUBMITTED
+  PRE_EVALUATION
+  COMMITTEE
+  ACCEPTED
+  REJECTED
+  ON_HOLD
+  IN_IMPLEMENTATION
+  IMPLEMENTED
+  CLOSED
+  WITHDRAWN
+}
+
+enum PreEvaluationMode {
+  DIRECT_MANAGER
+  ORG_UNIT_MANAGER
+}
+
+enum EvaluationStage {
+  PRE
+  COMMITTEE
+}
+
+enum EvaluationDecision {
+  FORWARD
+  ACCEPT
+  REJECT
+  HOLD
+  REVISE
+}
+
+enum KaizenType {
+  QUICK
+  EVENT
+  PROJECT
+}
+
+enum KaizenStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  PUBLISHED
+  REJECTED
+}
+
+enum KaizenGainType {
+  TANGIBLE
+  INTANGIBLE
+}
+
+enum KaizenGainMetric {
+  COST_TL
+  TIME_MIN
+  SCRAP
+  AREA_M2
+  DISTANCE_M
+  ENERGY_KWH
+  SAFETY
+  QUALITY
+  OTHER
+}
+
+/// Şirket başına tek satır
+model SuggestionSettings {
+  id                 String            @id @default(cuid())
+  tenantId           String            @unique
+  /// [{ key, label, weight, max }]
+  criteria           Json              @default("[]")
+  preEvaluation      PreEvaluationMode @default(DIRECT_MANAGER)
+  committeeTeamId    String?
+  /// Hızlı onay: ön değerlendirme puanı en az bu değerse (ve maliyet sınırı içindeyse) komitesiz kabul
+  autoAcceptMinScore Float?
+  autoAcceptMaxCost  Decimal?          @db.Decimal(18, 2)
+  /// { submission, acceptanceBands: [{ minScore, points }], implementation, kaizenPublished }
+  pointRules         Json              @default("{}")
+  /// [{ name, minPoints }]
+  rewardTiers        Json              @default("[]")
+  updatedAt          DateTime          @updatedAt
+}
+
+model Suggestion {
+  id                  String             @id @default(cuid())
+  tenantId            String
+  number              Int
+  title               String
+  currentState        String
+  proposedState       String
+  expectedBenefit     String
+  category            SuggestionCategory @default(OTHER)
+  orgUnitId           String?
+  submittedById       String
+  estimatedCost       Decimal?           @db.Decimal(18, 2)
+  estimatedSaving     Decimal?           @db.Decimal(18, 2)
+  selfImplementable   Boolean            @default(false)
+  status              SuggestionStatus   @default(SUBMITTED)
+  preEvaluatorId      String?
+  preScore            Float?
+  /// Komite puanlarının ortalaması (veya hızlı onayda ön değerlendirme puanı)
+  finalScore          Float?
+  fastTrack           Boolean            @default(false)
+  decisionNote        String?
+  rejectionReason     String?
+  revisionNote        String?
+  implementerId       String?
+  targetDate          DateTime?          @db.Date
+  implementationNote  String?
+  isSuggestionOfMonth Boolean            @default(false)
+  suggestionMonth     String?
+  submittedAt         DateTime           @default(now())
+  preEvaluatedAt      DateTime?
+  decidedAt           DateTime?
+  implementedAt       DateTime?
+  closedAt            DateTime?
+  withdrawnAt         DateTime?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  submittedBy  User                   @relation("SuggestionSubmitter", fields: [submittedById], references: [id])
+  preEvaluator User?                  @relation("SuggestionPreEvaluator", fields: [preEvaluatorId], references: [id])
+  implementer  User?                  @relation("SuggestionImplementer", fields: [implementerId], references: [id])
+  orgUnit      OrgUnit?               @relation(fields: [orgUnitId], references: [id])
+  members      SuggestionMember[]
+  evaluations  SuggestionEvaluation[]
+  events       SuggestionEvent[]
+  kaizens      Kaizen[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+  @@index([tenantId, submittedById])
+  @@index([tenantId, orgUnitId])
+}
+
+model SuggestionMember {
+  id           String @id @default(cuid())
+  tenantId     String
+  suggestionId String
+  userId       String
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  user       User       @relation("SuggestionMemberUser", fields: [userId], references: [id])
+
+  @@unique([suggestionId, userId])
+  @@index([tenantId, userId])
+}
+
+model SuggestionEvaluation {
+  id           String              @id @default(cuid())
+  tenantId     String
+  suggestionId String
+  stage        EvaluationStage
+  evaluatorId  String
+  /// { kriterKey: puan }
+  scores       Json                @default("{}")
+  totalScore   Float
+  decision     EvaluationDecision?
+  comment      String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  evaluator  User       @relation("SuggestionEvaluator", fields: [evaluatorId], references: [id])
+
+  @@unique([suggestionId, stage, evaluatorId])
+  @@index([tenantId, suggestionId])
+}
+
+/// Durum geçmişi / zaman çizelgesi
+model SuggestionEvent {
+  id           String   @id @default(cuid())
+  tenantId     String
+  suggestionId String
+  userId       String?
+  type         String
+  fromStatus   String?
+  toStatus     String?
+  note         String?
+  createdAt    DateTime @default(now())
+
+  suggestion Suggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  user       User?      @relation("SuggestionEventUser", fields: [userId], references: [id])
+
+  @@index([tenantId, suggestionId])
+}
+
+model Kaizen {
+  id                   String       @id @default(cuid())
+  tenantId             String
+  number               Int
+  type                 KaizenType   @default(QUICK)
+  title                String
+  problem              String
+  rootCause            String?
+  beforeDescription    String
+  afterDescription     String
+  orgUnitId            String?
+  leaderId             String
+  startDate            DateTime?    @db.Date
+  endDate              DateTime?    @db.Date
+  suggestionId         String?
+  status               KaizenStatus @default(DRAFT)
+  approvedById         String?
+  approvedAt           DateTime?
+  publishedAt          DateTime?
+  rejectionReason      String?
+  standardization      String?
+  horizontalDeployment String?
+  createdById          String
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  leader     User           @relation("KaizenLeader", fields: [leaderId], references: [id])
+  approvedBy User?          @relation("KaizenApprover", fields: [approvedById], references: [id])
+  createdBy  User           @relation("KaizenCreator", fields: [createdById], references: [id])
+  orgUnit    OrgUnit?       @relation(fields: [orgUnitId], references: [id])
+  suggestion Suggestion?    @relation(fields: [suggestionId], references: [id])
+  members    KaizenMember[]
+  gains      KaizenGain[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+  @@index([tenantId, leaderId])
+}
+
+model KaizenMember {
+  id       String @id @default(cuid())
+  tenantId String
+  kaizenId String
+  userId   String
+
+  kaizen Kaizen @relation(fields: [kaizenId], references: [id], onDelete: Cascade)
+  user   User   @relation("KaizenMemberUser", fields: [userId], references: [id])
+
+  @@unique([kaizenId, userId])
+  @@index([tenantId, userId])
+}
+
+model KaizenGain {
+  id                  String           @id @default(cuid())
+  tenantId            String
+  kaizenId            String
+  type                KaizenGainType
+  metric              KaizenGainMetric @default(OTHER)
+  description         String
+  beforeValue         Decimal?         @db.Decimal(18, 4)
+  afterValue          Decimal?         @db.Decimal(18, 4)
+  /// TL / yıl (somut kazanç için)
+  annualSaving        Decimal?         @db.Decimal(18, 2)
+  financeApproved     Boolean          @default(false)
+  financeApprovedById String?
+  financeApprovedAt   DateTime?
+  createdAt           DateTime         @default(now())
+
+  kaizen            Kaizen @relation(fields: [kaizenId], references: [id], onDelete: Cascade)
+  financeApprovedBy User?  @relation("KaizenGainFinanceApprover", fields: [financeApprovedById], references: [id])
+
+  @@index([tenantId, kaizenId])
+}
+
+model PointsLedger {
+  id         String   @id @default(cuid())
+  tenantId   String
+  userId     String
+  points     Int
+  /// SUBMISSION | ACCEPTANCE | IMPLEMENTATION | KAIZEN_PUBLISHED
+  reason     String
+  sourceType String
+  sourceId   String
+  createdAt  DateTime @default(now())
+
+  user User @relation("PointsLedgerUser", fields: [userId], references: [id])
+
+  @@unique([tenantId, userId, sourceType, sourceId, reason])
+  @@index([tenantId, userId])
+}

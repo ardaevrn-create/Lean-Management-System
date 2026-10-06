@@ -14,6 +14,7 @@ import { UpcomingMeetingsCard } from "@/components/meetings/upcoming-meetings-ca
 import { ProblemsDashboardCard } from "@/components/problems/problems-panels";
 import { HoshinCard } from "@/components/strategy/hoshin-card";
 import { AuditsDashboardCard } from "@/components/audits/audits-dashboard-card";
+import { SuggestionsHomeCard } from "@/components/suggestions/home-card";
 
 function StatCard({ label, value, icon, tone, href }: { label: string; value: number; icon: React.ReactNode; tone: string; href: string }) {
   return (
@@ -134,6 +135,7 @@ export default function HomePage() {
           <ProblemsDashboardCard widget={data.widgets.problems} />
           <HoshinCard widget={data.widgets.hoshin} />
           <AuditsDashboardCard widget={data.widgets.audits} />
+          <SuggestionsHomeCard widget={data.widgets.suggestions} />
         </div>
       )}
     </>

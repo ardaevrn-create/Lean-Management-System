@@ -7,3 +7,4 @@ export * from './meetings';
 export * from './problems';
 export * from './strategy';
 export * from './audits';
+export * from './suggestions';
