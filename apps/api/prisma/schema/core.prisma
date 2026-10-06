@@ -55,6 +55,14 @@ model User {
   attachments      Attachment[]
   auditLogs        AuditLog[]
 
+  // Meetings
+  facilitatedMeetingTypes MeetingType[]        @relation("MeetingTypeFacilitator")
+  meetingTypeMemberships  MeetingTypeMember[]  @relation("MeetingTypeMemberUser")
+  organizedMeetings       Meeting[]            @relation("MeetingOrganizer")
+  createdMeetings         Meeting[]            @relation("MeetingCreatedBy")
+  meetingParticipations   MeetingParticipant[] @relation("MeetingParticipantUser")
+  presentedAgendaItems    MeetingAgendaItem[]  @relation("MeetingAgendaPresenter")
+
   @@unique([tenantId, username])
   @@index([tenantId])
 }
@@ -105,6 +113,10 @@ model OrgUnit {
   employees Employee[] @relation("EmployeeOrgUnit")
   userRoles UserRole[]
   actions   Action[]
+
+  // Meetings
+  meetingTypes MeetingType[]
+  meetings     Meeting[]
 
   @@index([tenantId, path])
   @@index([tenantId, parentId])
