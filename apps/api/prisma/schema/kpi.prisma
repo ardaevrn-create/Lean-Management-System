@@ -1,0 +1,175 @@
+// ---------- M8: KPI Yönetimi ----------
+
+enum KpiCategory {
+  QUALITY
+  PRODUCTIVITY
+  COST
+  DELIVERY
+  SAFETY
+  PEOPLE
+  ENVIRONMENT
+  OTHER
+}
+
+enum KpiDirection {
+  HIGHER_BETTER
+  LOWER_BETTER
+  RANGE
+}
+
+enum KpiFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum KpiAggregation {
+  SUM
+  AVERAGE
+  LAST
+  MIN
+  MAX
+}
+
+enum KpiStatus {
+  GREEN
+  YELLOW
+  RED
+  NO_TARGET
+}
+
+enum KpiValueSource {
+  MANUAL
+  IMPORT
+  API
+  CALCULATED
+}
+
+model KpiDefinition {
+  id                  String         @id @default(cuid())
+  tenantId            String
+  code                String
+  name                String
+  description         String?
+  category            KpiCategory    @default(OTHER)
+  unit                String         @default("")
+  decimals            Int            @default(2)
+  direction           KpiDirection   @default(HIGHER_BETTER)
+  frequency           KpiFrequency   @default(MONTHLY)
+  aggregation         KpiAggregation @default(AVERAGE)
+  /// Hedefin yüzdesi olarak sarı tolerans
+  warningTolerancePct Decimal        @default(5) @db.Decimal(8, 4)
+  /// Dönem sonundan kaç gün sonra değer "eksik" sayılır
+  entryDueDays        Int            @default(5)
+  orgUnitId           String
+  ownerId             String
+  /// Boşsa veri giriş sorumlusu = sahip
+  dataEntryUserId     String?
+  /// Hesaplanan KPI: "({HURDA} / {URETIM}) * 100"
+  formula             String?
+  /// Formüldeki KPI kodları (bağımlı KPI'ları bulmak için)
+  formulaRefs         String[]
+  /// Beklenen ilk dönem (boşsa oluşturulma dönemi)
+  startPeriod         String?
+  isActive            Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  orgUnit       OrgUnit        @relation(fields: [orgUnitId], references: [id])
+  owner         User           @relation("KpiOwner", fields: [ownerId], references: [id])
+  dataEntryUser User?          @relation("KpiDataEntry", fields: [dataEntryUserId], references: [id])
+  targets       KpiTarget[]
+  values        KpiValue[]
+  deviations    KpiDeviation[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, orgUnitId])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, dataEntryUserId])
+}
+
+model KpiTarget {
+  id        String   @id @default(cuid())
+  tenantId  String
+  kpiId     String
+  period    String
+  target    Decimal  @db.Decimal(18, 4)
+  /// Yalnız RANGE: bandın üst sınırı
+  targetMax Decimal? @db.Decimal(18, 4)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  kpi KpiDefinition @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+
+  @@unique([kpiId, period])
+  @@index([tenantId, kpiId])
+}
+
+model KpiValue {
+  id          String         @id @default(cuid())
+  tenantId    String
+  kpiId       String
+  period      String
+  value       Decimal        @db.Decimal(18, 4)
+  status      KpiStatus      @default(NO_TARGET)
+  source      KpiValueSource @default(MANUAL)
+  note        String?
+  enteredById String
+  enteredAt   DateTime       @default(now())
+  /// Son giriş tarihinden sonra girildi
+  isLate      Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  kpi        KpiDefinition      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  enteredBy  User               @relation("KpiValueEnteredBy", fields: [enteredById], references: [id])
+  revisions  KpiValueRevision[]
+  deviations KpiDeviation[]
+
+  @@unique([kpiId, period])
+  @@index([tenantId, kpiId])
+  @@index([tenantId, status])
+}
+
+model KpiValueRevision {
+  id          String   @id @default(cuid())
+  tenantId    String
+  valueId     String
+  oldValue    Decimal  @db.Decimal(18, 4)
+  newValue    Decimal  @db.Decimal(18, 4)
+  changedById String
+  reason      String
+  createdAt   DateTime @default(now())
+
+  value     KpiValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  changedBy User     @relation("KpiRevisionChangedBy", fields: [changedById], references: [id])
+
+  @@index([tenantId, valueId])
+}
+
+model KpiDeviation {
+  id             String        @id @default(cuid())
+  tenantId       String
+  kpiId          String
+  period         String
+  valueId        String
+  explanation    String
+  rootCause      String?
+  approvalStatus RequestStatus @default(PENDING)
+  decidedById    String?
+  decidedAt      DateTime?
+  decisionNote   String?
+  createdById    String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  kpi       KpiDefinition @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  value     KpiValue      @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  decidedBy User?         @relation("KpiDeviationDecidedBy", fields: [decidedById], references: [id])
+  createdBy User          @relation("KpiDeviationCreatedBy", fields: [createdById], references: [id])
+
+  @@unique([kpiId, period])
+  @@index([tenantId, approvalStatus])
+}

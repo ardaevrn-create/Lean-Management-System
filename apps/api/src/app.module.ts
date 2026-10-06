@@ -11,6 +11,7 @@ import { PrismaModule } from './core/prisma/prisma.module';
 import { SharedServicesModule } from './core/shared-services.module';
 import { TenantsModule } from './core/tenants/tenants.module';
 import { UsersModule } from './core/users/users.module';
+import { KpiModule } from './modules/kpi/kpi.module';
 
 @Controller('health')
 class HealthController {
@@ -35,6 +36,7 @@ class HealthController {
     ActionsModule,
     DashboardModule,
     // İş modülleri (Faz 1+): KpiModule, MeetingsModule, ...
+    KpiModule,
   ],
   controllers: [HealthController],
 })
