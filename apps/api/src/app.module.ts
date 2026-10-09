@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ClsModule } from 'nestjs-cls';
 import { Public } from './common/decorators';
+import { CronController } from './cron.controller';
 import { ActionsModule } from './core/actions/actions.module';
 import { AuthModule } from './core/auth/auth.module';
 import { DashboardModule } from './core/dashboard/dashboard.module';
@@ -48,6 +49,6 @@ class HealthController {
     AuditsModule,
     SuggestionsModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, CronController],
 })
 export class AppModule {}

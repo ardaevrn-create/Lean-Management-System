@@ -376,3 +376,11 @@ model Sequence {
 
   @@id([tenantId, name])
 }
+
+/// Dosya içeriği (STORAGE_DRIVER=db). Kalıcı diski olmayan sunucusuz ortamlar (Vercel) için.
+model StoredFile {
+  key       String   @id
+  data      Bytes
+  size      Int
+  createdAt DateTime @default(now())
+}

@@ -21,6 +21,11 @@
 - Web metinleri: modül çevirileri `apps/web/src/messages/modules/<modül>.{tr,en}.json`, `lib/i18n.tsx` içinde `<modül>Module` anahtarıyla bağlanır. Kodda sabit Türkçe metin yazma.
 - Her değişiklikte denetim izi: `AuditService.log(...)`.
 
+## Yayın (Vercel)
+- İki Vercel projesi: `apps/api` (NestJS, `api/index.js` fonksiyonu + `src/serverless.ts`, Neon Postgres) ve `apps/web` (Next.js, `/api/v1` → `API_ORIGIN` rewrite). Rehber: `docs/05-yayina-alma.md`.
+- Prisma Rust'sız istemci (`engineType = "client"` + `@prisma/adapter-pg`); WASM dosyası `src/serverless.ts` içindeki ipucu ile pakete girer, silmeyin.
+- Vercel'de `STORAGE_DRIVER=db`, `SCHEDULER_ENABLED=false`; hatırlatmalar Vercel Cron → `/api/v1/internal/cron/daily`.
+
 ## Komutlar
 ```bash
 docker compose up -d                                  # postgres

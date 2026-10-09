@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { PrismaClient } from '@prisma/client';
+import { createPrismaClient } from '../src/core/prisma/prisma.service';
 
 /** Test veritabanına migration'ları uygular ve tüm tabloları boşaltır. */
 export default async function globalSetup() {
@@ -7,9 +7,9 @@ export default async function globalSetup() {
   if (!/test/i.test(new URL(url).pathname)) throw new Error(`Refusing to clean non-test database: ${url}`);
   execSync('npx prisma migrate deploy', { cwd: `${__dirname}/..`, env: { ...process.env, DATABASE_URL: url }, stdio: 'ignore' });
 
-  const prisma = new PrismaClient({ datasources: { db: { url } } });
+  const prisma = createPrismaClient(url);
   const tables = await prisma.$queryRaw<{ tablename: string }[]>`
-    SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> '_prisma_migrations'`;
+    SELECT tablename::text AS tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> '_prisma_migrations'`;
   if (tables.length) {
     await prisma.$executeRawUnsafe(`TRUNCATE ${tables.map((t) => `"${t.tablename}"`).join(', ')} CASCADE`);
   }
