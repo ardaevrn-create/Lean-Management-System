@@ -2,6 +2,13 @@
 **/dist
 **/.next
 **/.env
+**/*.tsbuildinfo
 apps/api/uploads
 .git
+.github
 .claude
+docs
+*.md
+*.bat
+*.sh
+!apps/api/docker-start.sh

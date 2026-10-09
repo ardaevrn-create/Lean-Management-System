@@ -28,7 +28,8 @@
 
 ## Komutlar
 ```bash
-docker compose up -d                                  # postgres
+docker compose up -d --build                          # TÜM uygulama (db+api+web) → http://localhost:3000 (Windows: baslat.bat); ayrıntı docs/06-yerel-kurulum.md
+docker compose up -d db                               # yalnız postgres (geliştirme; host portu 5433)
 pnpm install && pnpm --filter @lean/shared build
 pnpm --filter @lean/api exec prisma migrate deploy
 pnpm --filter @lean/api seed                          # DEMO şirketi (zaten varsa atlanır)

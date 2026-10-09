@@ -1,4 +1,6 @@
-# Yayına Alma: Vercel (tek proje)
+# Yayına Alma: Vercel (tek proje) — isteğe bağlı
+
+> Bu doküman **isteğe bağlıdır**. Birincil kurulum yolu kendi bilgisayarınızda Docker ile çalıştırmaktır: bkz. [06-yerel-kurulum.md](06-yerel-kurulum.md).
 
 Web arayüzü ve API **aynı Vercel projesinde** çalışır. NestJS API'si `apps/web/src/pages/api/v1/[...path].ts` yolu üzerinden Next.js içinde çalışır; ayrıca bir API projesi veya `API_ORIGIN` gerekmez. Ayarlar `apps/web/vercel.json` ve `scripts/vercel-build.sh` dosyalarındadır.
 
