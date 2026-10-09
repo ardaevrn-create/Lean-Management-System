@@ -1,0 +1,10 @@
+generator client {
+  provider   = "prisma-client-js"
+  // Rust'sız istemci + pg sürücü adaptörü: sunucusuz ortamda (Vercel) yerel motor dosyası gerekmez
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

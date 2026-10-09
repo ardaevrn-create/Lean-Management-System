@@ -1,0 +1,253 @@
+// ---------- Stratejik Planlama (M2) + Hoshin Kanri (M3) ----------
+
+enum StrategyPlanStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum SwotType {
+  STRENGTH
+  WEAKNESS
+  OPPORTUNITY
+  THREAT
+}
+
+enum StrategyPerspective {
+  FINANCIAL
+  CUSTOMER
+  INTERNAL_PROCESS
+  LEARNING_GROWTH
+}
+
+enum HoshinLevel {
+  BREAKTHROUGH
+  ANNUAL
+  PRIORITY
+  DEPARTMENT
+  INDIVIDUAL
+}
+
+enum HoshinDirection {
+  HIGHER_BETTER
+  LOWER_BETTER
+}
+
+enum HoshinStatus {
+  DRAFT
+  PROPOSED
+  IN_CATCHBALL
+  AGREED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum HoshinCatchballType {
+  PROPOSAL
+  COMMENT
+  COUNTER_PROPOSAL
+  AGREEMENT
+  REJECTION
+}
+
+/// Catchball tarafı: PARENT = üst hedef sahibi / yönetici, CHILD = hedefin atandığı sahip
+enum HoshinCatchballSide {
+  PARENT
+  CHILD
+}
+
+enum HoshinCorrelationTarget {
+  GOAL
+  KPI
+  USER
+}
+
+enum HoshinCorrelationStrength {
+  STRONG
+  MEDIUM
+  WEAK
+}
+
+enum HoshinUserRole {
+  RESPONSIBLE
+  SUPPORT
+}
+
+model StrategyPlan {
+  id                String             @id @default(cuid())
+  tenantId          String
+  name              String
+  startYear         Int
+  endYear           Int
+  status            StrategyPlanStatus @default(DRAFT)
+  vision            String?
+  mission           String?
+  values            String[]
+  version           Int                @default(1)
+  /// "Yeni versiyon" ile kopyalanan önceki plan
+  previousVersionId String?
+  approvedById      String?
+  approvedAt        DateTime?
+  createdById       String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  approvedBy   User?                @relation("StrategyPlanApprovedBy", fields: [approvedById], references: [id])
+  createdBy    User                 @relation("StrategyPlanCreatedBy", fields: [createdById], references: [id])
+  swotItems    SwotItem[]
+  objectives   StrategicObjective[]
+  goals        HoshinGoal[]
+  correlations HoshinCorrelation[]
+
+  @@index([tenantId, status])
+}
+
+model SwotItem {
+  id        String   @id @default(cuid())
+  tenantId  String
+  planId    String
+  type      SwotType
+  text      String
+  /// 1–5 etki / önem
+  impact    Int      @default(3)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plan StrategyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, planId])
+}
+
+model StrategicObjective {
+  id          String               @id @default(cuid())
+  tenantId    String
+  planId      String
+  code        String
+  title       String
+  description String?
+  perspective StrategyPerspective?
+  ownerId     String?
+  sortOrder   Int                  @default(0)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  plan  StrategyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  owner User?        @relation("StrategicObjectiveOwner", fields: [ownerId], references: [id])
+  goals HoshinGoal[]
+
+  @@unique([planId, code])
+  @@index([tenantId, planId])
+}
+
+model HoshinGoal {
+  id          String          @id @default(cuid())
+  tenantId    String
+  planId      String
+  parentId    String?
+  level       HoshinLevel
+  code        String
+  title       String
+  description String?
+  /// ANNUAL ve altı için hedef yılı; BREAKTHROUGH için (opsiyonel) hedef yıl
+  year        Int?
+  objectiveId String?
+  orgUnitId   String?
+  ownerId     String?
+  /// Ölçüm KPI'ı (M8). Doluysa plan = KPI hedefi, gerçekleşme = KPI değeri.
+  kpiId       String?
+  unit        String          @default("")
+  baseline    Decimal?        @db.Decimal(18, 4)
+  targetValue Decimal?        @db.Decimal(18, 4)
+  direction   HoshinDirection @default(HIGHER_BETTER)
+  /// Yıl içi toplulaştırma (YTD): KPI bağlıysa KPI'dan kopyalanır
+  aggregation KpiAggregation  @default(LAST)
+  weight      Decimal         @default(1) @db.Decimal(8, 4)
+  status      HoshinStatus    @default(DRAFT)
+  startDate   DateTime?       @db.Date
+  endDate     DateTime?       @db.Date
+  /// Catchball mutabakat tarihi
+  agreedAt    DateTime?
+  sortOrder   Int             @default(0)
+  createdById String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  plan             StrategyPlan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  parent           HoshinGoal?            @relation("HoshinTree", fields: [parentId], references: [id])
+  children         HoshinGoal[]           @relation("HoshinTree")
+  objective        StrategicObjective?    @relation(fields: [objectiveId], references: [id], onDelete: SetNull)
+  orgUnit          OrgUnit?               @relation("HoshinGoalOrgUnit", fields: [orgUnitId], references: [id])
+  owner            User?                  @relation("HoshinGoalOwner", fields: [ownerId], references: [id])
+  kpi              KpiDefinition?         @relation("HoshinGoalKpi", fields: [kpiId], references: [id])
+  createdBy        User                   @relation("HoshinGoalCreatedBy", fields: [createdById], references: [id])
+  monthly          HoshinMonthlyPlan[]
+  catchball        HoshinCatchballEntry[]
+  correlationsFrom HoshinCorrelation[]    @relation("HoshinCorrelationFrom")
+
+  @@unique([planId, code])
+  @@index([tenantId, planId, level])
+  @@index([tenantId, ownerId])
+  @@index([tenantId, parentId])
+  @@index([tenantId, kpiId])
+}
+
+/// Yalnız KPI bağlantısı olmayan (elle takip edilen) hedefler için aylık plan / gerçekleşme
+model HoshinMonthlyPlan {
+  id          String   @id @default(cuid())
+  tenantId    String
+  goalId      String
+  period      String
+  plan        Decimal? @db.Decimal(18, 4)
+  actual      Decimal? @db.Decimal(18, 4)
+  /// Hedef altı açıklaması / karşı önlem notu
+  comment     String?
+  updatedById String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  goal HoshinGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@unique([goalId, period])
+  @@index([tenantId, goalId])
+}
+
+model HoshinCatchballEntry {
+  id             String              @id @default(cuid())
+  tenantId       String
+  goalId         String
+  userId         String
+  side           HoshinCatchballSide
+  type           HoshinCatchballType
+  message        String              @default("")
+  proposedTarget Decimal?            @db.Decimal(18, 4)
+  createdAt      DateTime            @default(now())
+
+  goal HoshinGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user User       @relation("HoshinCatchballUser", fields: [userId], references: [id])
+
+  @@index([tenantId, goalId, createdAt])
+}
+
+model HoshinCorrelation {
+  id         String                    @id @default(cuid())
+  tenantId   String
+  planId     String
+  year       Int
+  fromGoalId String
+  targetType HoshinCorrelationTarget
+  /// GOAL → HoshinGoal.id, KPI → KpiDefinition.id, USER → User.id
+  targetId   String
+  strength   HoshinCorrelationStrength @default(MEDIUM)
+  /// Yalnız USER hedefi için
+  userRole   HoshinUserRole?
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+
+  plan     StrategyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  fromGoal HoshinGoal   @relation("HoshinCorrelationFrom", fields: [fromGoalId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, year, fromGoalId, targetType, targetId])
+  @@index([tenantId, planId, year])
+}

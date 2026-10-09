@@ -1,0 +1,443 @@
+{
+  "app": {
+    "name": "Lean Management"
+  },
+  "common": {
+    "active": "Active",
+    "all": "All",
+    "back": "Back",
+    "cancel": "Cancel",
+    "close": "Close",
+    "code": "Code",
+    "comingSoon": "Coming soon",
+    "comingSoonDesc": "This module will be added in upcoming phases.",
+    "confirm": "Confirm",
+    "copied": "Copied",
+    "copy": "Copy",
+    "create": "Create",
+    "delete": "Delete",
+    "deleted": "Deleted.",
+    "description": "Description",
+    "download": "Download",
+    "edit": "Edit",
+    "email": "Email",
+    "error": "Something went wrong.",
+    "exportExcel": "Export to Excel",
+    "inactive": "Inactive",
+    "language": "Language",
+    "loading": "Loading...",
+    "name": "Name",
+    "networkError": "Cannot reach the server. Check your connection.",
+    "next": "Next",
+    "noResults": "No results",
+    "pageInfo": "{from}-{to} of {total}",
+    "phone": "Phone",
+    "prev": "Previous",
+    "save": "Save",
+    "saved": "Saved.",
+    "search": "Search...",
+    "select": "Select",
+    "selectAll": "Select all",
+    "sortOrder": "Sort order",
+    "status": "Status",
+    "type": "Type",
+    "viewAll": "View all"
+  },
+  "nav": {
+    "home": "Home",
+    "actions": "My Actions",
+    "kpi": "KPI",
+    "meetings": "Meetings",
+    "hoshin": "Strategy & Hoshin",
+    "problems": "Problem Solving",
+    "audits": "5S & TPM",
+    "suggestions": "Suggestions & Kaizen",
+    "groupOrg": "Organization",
+    "groupAdmin": "Administration",
+    "orgUnits": "Org Chart",
+    "employees": "Employees",
+    "teams": "Teams",
+    "users": "Users",
+    "roles": "Roles",
+    "imports": "Excel Import",
+    "apiKeys": "API Keys",
+    "auditLogs": "Audit Log",
+    "settings": "Company Settings",
+    "menu": "Menu",
+    "toggle": "Collapse/expand menu"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Sign in with your company code and account.",
+    "tenantCode": "Company Code",
+    "username": "Username",
+    "usernameHint": "Your email or employee number",
+    "password": "Password",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "invalidCredentials": "Invalid company code, username or password.",
+    "changePassword": "Change Password",
+    "mustChangeInfo": "You must change your temporary password to continue.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "passwordHint": "At least 8 characters.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "passwordChanged": "Your password has been changed."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications.",
+    "markAllRead": "Mark all as read"
+  },
+  "home": {
+    "welcome": "Hello, {name}",
+    "subtitle": "Your personal dashboard",
+    "openActions": "Open Actions",
+    "overdueActions": "Overdue Actions",
+    "dueThisWeek": "Due This Week",
+    "unreadNotifications": "Unread Notifications",
+    "upcomingActions": "My Upcoming Actions",
+    "noUpcoming": "No upcoming actions."
+  },
+  "actionStatus": {
+    "OPEN": "Open",
+    "IN_PROGRESS": "In Progress",
+    "DONE": "Done",
+    "VERIFIED": "Verified",
+    "CANCELLED": "Cancelled"
+  },
+  "priority": {
+    "LOW": "Low",
+    "MEDIUM": "Medium",
+    "HIGH": "High",
+    "CRITICAL": "Critical"
+  },
+  "actionSource": {
+    "MANUAL": "Manual",
+    "MEETING": "Meeting",
+    "KPI_DEVIATION": "KPI Deviation",
+    "PROBLEM": "Problem",
+    "AUDIT_FINDING": "Audit Finding",
+    "HOSHIN": "Hoshin",
+    "SUGGESTION": "Suggestion",
+    "KAIZEN": "Kaizen"
+  },
+  "orgType": {
+    "COMPANY": "Company",
+    "SITE": "Site",
+    "DIRECTORATE": "Directorate",
+    "DEPARTMENT": "Department",
+    "UNIT": "Unit",
+    "LINE": "Line",
+    "AREA": "Area"
+  },
+  "teamType": {
+    "COMMITTEE": "Committee",
+    "KAIZEN_TEAM": "Kaizen Team",
+    "FIVE_S_TEAM": "5S Team",
+    "HOSHIN_TEAM": "Hoshin Team",
+    "OTHER": "Other"
+  },
+  "actions": {
+    "title_plural": "Actions",
+    "new": "New Action",
+    "created": "Action created.",
+    "code": "Code",
+    "title": "Title",
+    "description": "Description",
+    "owner": "Owner",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "progress": "Progress",
+    "orgUnit": "Org Unit",
+    "supporters": "Supporters",
+    "addSupporter": "Add supporter...",
+    "createdBy": "Created By",
+    "overdue": "Overdue",
+    "overdueDays": "{days} days overdue",
+    "viewMine": "Mine",
+    "viewTeam": "My Team",
+    "viewCreated": "Created by Me",
+    "viewAll": "All",
+    "allSources": "All sources",
+    "onlyOverdue": "Overdue only",
+    "list": "List",
+    "kanban": "Kanban",
+    "empty": "No actions found.",
+    "backToList": "Back to actions",
+    "statusChanged": "Status updated.",
+    "to": {
+      "OPEN": "Reopen",
+      "IN_PROGRESS": "Start / Resume",
+      "DONE": "Mark as Done",
+      "VERIFIED": "Verify & Close",
+      "CANCELLED": "Cancel"
+    },
+    "completeTitle": "Complete Action",
+    "completionNote": "Completion Note",
+    "completionNoteHint": "Briefly describe what was done.",
+    "originalDue": "Original due: {date}",
+    "dueRequests": "Due Date Change Requests",
+    "requestDueChange": "Request Due Date Change",
+    "noDueRequests": "No due date change requests.",
+    "newDueDate": "New Due Date",
+    "reason": "Reason",
+    "dueRequestSent": "Request sent.",
+    "dueStatus": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "awaitingDecision": "Pending requests await manager approval.",
+    "comments": "Comments",
+    "noComments": "No comments yet.",
+    "commentPlaceholder": "Write a comment...",
+    "send": "Send",
+    "history": "History",
+    "hist": {
+      "CREATED": "Action created",
+      "UPDATED": "Action updated",
+      "STATUS_CHANGED": "Status: {from} → {to}",
+      "DUE_DATE_CHANGED": "Due date: {from} → {to}",
+      "PROGRESS": "Progress: {from}% → {to}%",
+      "OWNER_CHANGED": "Owner: {from} → {to}"
+    }
+  },
+  "attachments": {
+    "title": "Attachments",
+    "dropHint": "Drag files here or click to browse",
+    "empty": "No attachments.",
+    "uploaded": "File uploaded.",
+    "deleteConfirm": "\"{name}\" will be deleted. Are you sure?"
+  },
+  "org": {
+    "unitsDesc": "Company unit hierarchy",
+    "addRoot": "Add Top-Level Unit",
+    "addChild": "Add child unit",
+    "newUnit": "New Unit",
+    "editUnit": "Edit Unit",
+    "parent": "Parent Unit",
+    "noParent": "(No parent)",
+    "manager": "Manager",
+    "noUnits": "No units defined yet.",
+    "deleteConfirm": "\"{name}\" will be deleted. Units with children or employees cannot be deleted."
+  },
+  "employees": {
+    "new": "New Employee",
+    "edit": "Edit Employee",
+    "no": "Employee No",
+    "titleField": "Title",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "hireDate": "Hire Date",
+    "orgUnit": "Org Unit",
+    "manager": "Manager",
+    "account": "Account",
+    "createUser": "Create user account",
+    "createUserHint": "Creates an account that signs in with the employee number and a temporary password.",
+    "searchPlaceholder": "Search name or employee no...",
+    "allUnits": "All units",
+    "empty": "No employees found.",
+    "deactivate": "Deactivate",
+    "deactivated": "Employee deactivated.",
+    "deactivateConfirm": "\"{name}\" will be deactivated. Are you sure?"
+  },
+  "credential": {
+    "title": "Account Credentials",
+    "warning": "The temporary password is shown only once. Copy it and share it securely.",
+    "tempPassword": "Temporary Password",
+    "copyAll": "Copy credentials"
+  },
+  "teams": {
+    "new": "New Team",
+    "edit": "Edit Team",
+    "members": "Members",
+    "role": "Role",
+    "addMember": "Add member...",
+    "empty": "No teams yet.",
+    "deleteConfirm": "Team \"{name}\" will be deleted. Are you sure?"
+  },
+  "users": {
+    "new": "New User",
+    "user": "User",
+    "fullName": "Full Name",
+    "roles": "Roles",
+    "lastLogin": "Last Login",
+    "mustChange": "Must change password",
+    "empty": "No users found.",
+    "passwordHint": "Leave blank to generate a temporary password.",
+    "linkedEmployee": "Linked Employee",
+    "editRoles": "Edit Roles",
+    "addRole": "Add Role",
+    "wholeCompany": "Whole company",
+    "scopeHint": "If a unit is selected, the role applies to that unit and below; otherwise company-wide.",
+    "resetPassword": "Reset Password",
+    "resetConfirm": "A new temporary password will be generated for \"{name}\".",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "bulkFromEmployees": "Bulk Create from Employees",
+    "bulkHint": "Select active employees that do not have an account yet.",
+    "noCandidates": "No employees without an account.",
+    "createAccounts": "Create {count} Accounts",
+    "downloadCsv": "Download CSV / Excel"
+  },
+  "roles": {
+    "new": "New Role",
+    "edit": "Edit Role",
+    "empty": "No roles found.",
+    "permissions": "Permissions",
+    "permCount": "{count} permissions",
+    "userCount": "{count} users",
+    "system": "System role",
+    "deleteConfirm": "Role \"{name}\" will be deleted. Are you sure?"
+  },
+  "imports": {
+    "subtitle": "Bulk-load data from Excel or CSV files.",
+    "step": {
+      "upload": "Upload File",
+      "mapping": "Column Mapping",
+      "validate": "Validation",
+      "result": "Result"
+    },
+    "type": "Import Type",
+    "columns": "Expected columns (* required)",
+    "downloadTemplate": "Download Template",
+    "dropTitle": "Drag and drop your file here",
+    "dropHint": "or click to browse (.xlsx, .csv)",
+    "badFileType": "Only .xlsx or .csv files can be uploaded (save old .xls files as .xlsx).",
+    "totalRows": "{count} rows",
+    "mappingHint": "For each import column, choose the matching header from your file.",
+    "importColumn": "Import Column",
+    "excelColumn": "Excel Header",
+    "notMapped": "(Not mapped)",
+    "requiredMissing": "Required columns not mapped: {columns}",
+    "samplePreview": "Sample Rows",
+    "validate": "Validate",
+    "totalRowsLabel": "Total Rows",
+    "validRows": "Valid Rows",
+    "errorRows": "Rows with Errors",
+    "successRows": "Imported Rows",
+    "errorsSkipped": "Rows with errors will be skipped; only valid rows are imported.",
+    "row": "Row",
+    "column": "Column",
+    "message": "Message",
+    "backToMapping": "Back to Mapping",
+    "commit": "Import {count} Rows",
+    "done": "Import completed",
+    "importAnother": "Import Another File"
+  },
+  "audit": {
+    "date": "Date",
+    "user": "User",
+    "action": "Action",
+    "entity": "Entity",
+    "entityId": "Entity ID",
+    "empty": "No records found."
+  },
+  "settings": {
+    "companyCode": "Company Code",
+    "companyName": "Company Name",
+    "defaultLocale": "Default Language",
+    "timezone": "Time Zone",
+    "primaryColor": "Primary Color"
+  },
+  "apiKeys": {
+    "new": "New API Key",
+    "prefix": "Prefix",
+    "expiresAt": "Expires",
+    "lastUsed": "Last Used",
+    "revoked": "Revoked",
+    "revoke": "Revoke",
+    "revokeConfirm": "Key \"{name}\" will be revoked and can no longer be used.",
+    "empty": "No API keys.",
+    "permissions": "Permissions",
+    "createdTitle": "API Key Created",
+    "onceWarning": "This key is shown only once. Copy it now and store it safely.",
+    "usageNote": "Power BI / Excel / Power Automate: send the key in the x-api-key header.",
+    "never": "Never"
+  },
+  "permGroup": {
+    "tenant": "Company Management",
+    "action": "Actions",
+    "kpi": "KPI",
+    "meeting": "Meetings",
+    "strategy": "Strategy",
+    "hoshin": "Hoshin",
+    "problem": "Problem Solving",
+    "audit": "5S / TPM Audit",
+    "suggestion": "Suggestions / Kaizen"
+  },
+  "perm": {
+    "tenant": {
+      "settings": "Manage company settings"
+    },
+    "user": {
+      "manage": "Manage users"
+    },
+    "role": {
+      "manage": "Manage roles"
+    },
+    "org": {
+      "manage": "Manage organization",
+      "view": "View organization"
+    },
+    "employee": {
+      "manage": "Manage employees"
+    },
+    "auditlog": {
+      "view": "View audit log"
+    },
+    "apikey": {
+      "manage": "Manage API keys"
+    },
+    "import": {
+      "run": "Run Excel imports"
+    },
+    "action": {
+      "viewAll": "View all actions",
+      "manage": "Manage actions"
+    },
+    "kpi": {
+      "view": "View KPIs",
+      "manage": "Manage KPIs",
+      "value": {
+        "enter": "Enter KPI values"
+      },
+      "deviation": {
+        "approve": "Approve KPI deviations"
+      }
+    },
+    "meeting": {
+      "view": "View meetings",
+      "manage": "Manage meetings"
+    },
+    "strategy": {
+      "view": "View strategy",
+      "manage": "Manage strategy"
+    },
+    "hoshin": {
+      "view": "View Hoshin",
+      "manage": "Manage Hoshin"
+    },
+    "problem": {
+      "view": "View problems",
+      "create": "Create problems",
+      "manage": "Manage problems"
+    },
+    "audit": {
+      "view": "View audits",
+      "perform": "Perform audits",
+      "manage": "Manage audits"
+    },
+    "suggestion": {
+      "create": "Create suggestions",
+      "evaluate": "Evaluate suggestions",
+      "manage": "Manage suggestions"
+    }
+  }
+}

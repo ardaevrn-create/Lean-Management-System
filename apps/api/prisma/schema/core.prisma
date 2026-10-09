@@ -1,0 +1,386 @@
+// ---------- Çekirdek: şirket, kullanıcı, organizasyon, yetki ----------
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model Tenant {
+  id           String       @id @default(cuid())
+  code         String       @unique
+  name         String
+  status       TenantStatus @default(ACTIVE)
+  locale       String       @default("tr")
+  timezone     String       @default("Europe/Istanbul")
+  logoUrl      String?
+  primaryColor String?
+  settings     Json         @default("{}")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  users    User[]
+  orgUnits OrgUnit[]
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  tenantId           String
+  username           String
+  email              String?
+  passwordHash       String
+  fullName           String
+  locale             String    @default("tr")
+  isActive           Boolean   @default(true)
+  isPlatformAdmin    Boolean   @default(false)
+  mustChangePassword Boolean   @default(false)
+  lastLoginAt        DateTime?
+  employeeId         String?   @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id])
+  employee      Employee?      @relation(fields: [employeeId], references: [id])
+  roles         UserRole[]
+  refreshTokens RefreshToken[]
+  notifications Notification[]
+
+  ownedActions     Action[]               @relation("ActionOwner")
+  createdActions   Action[]               @relation("ActionCreatedBy")
+  verifiedActions  Action[]               @relation("ActionVerifiedBy")
+  actionSupports   ActionSupporter[]
+  actionHistory    ActionHistory[]
+  actionComments   ActionComment[]
+  dueDateRequests  ActionDueDateRequest[] @relation("DueDateRequestedBy")
+  dueDateDecisions ActionDueDateRequest[] @relation("DueDateDecidedBy")
+  attachments      Attachment[]
+  auditLogs        AuditLog[]
+
+  // Meetings
+  facilitatedMeetingTypes MeetingType[]        @relation("MeetingTypeFacilitator")
+  meetingTypeMemberships  MeetingTypeMember[]  @relation("MeetingTypeMemberUser")
+  organizedMeetings       Meeting[]            @relation("MeetingOrganizer")
+  createdMeetings         Meeting[]            @relation("MeetingCreatedBy")
+  meetingParticipations   MeetingParticipant[] @relation("MeetingParticipantUser")
+  presentedAgendaItems    MeetingAgendaItem[]  @relation("MeetingAgendaPresenter")
+  // KPI
+  kpiOwned                KpiDefinition[]      @relation("KpiOwner")
+  kpiDataEntry            KpiDefinition[]      @relation("KpiDataEntry")
+  kpiValuesEntered        KpiValue[]           @relation("KpiValueEnteredBy")
+  kpiRevisions            KpiValueRevision[]   @relation("KpiRevisionChangedBy")
+  kpiDeviationsDecided    KpiDeviation[]       @relation("KpiDeviationDecidedBy")
+  kpiDeviationsCreated    KpiDeviation[]       @relation("KpiDeviationCreatedBy")
+
+  // Problems
+  ownedProblems            Problem[]              @relation("ProblemOwner")
+  reportedProblems         Problem[]              @relation("ProblemReporter")
+  problemMemberships       ProblemMember[]        @relation("ProblemMemberUser")
+  problemVerifications     ProblemVerification[]  @relation("ProblemVerifier")
+  problemHistory           ProblemHistory[]       @relation("ProblemHistoryUser")
+  // Strategy & Hoshin
+  strategyPlansApproved    StrategyPlan[]         @relation("StrategyPlanApprovedBy")
+  strategyPlansCreated     StrategyPlan[]         @relation("StrategyPlanCreatedBy")
+  strategicObjectivesOwned StrategicObjective[]   @relation("StrategicObjectiveOwner")
+  hoshinGoalsOwned         HoshinGoal[]           @relation("HoshinGoalOwner")
+  hoshinGoalsCreated       HoshinGoal[]           @relation("HoshinGoalCreatedBy")
+  hoshinCatchballEntries   HoshinCatchballEntry[] @relation("HoshinCatchballUser")
+  // Suggestions & Kaizen
+  suggestionsSubmitted     Suggestion[]           @relation("SuggestionSubmitter")
+  suggestionsPreEvaluated  Suggestion[]           @relation("SuggestionPreEvaluator")
+  suggestionsImplemented   Suggestion[]           @relation("SuggestionImplementer")
+  suggestionMemberships    SuggestionMember[]     @relation("SuggestionMemberUser")
+  suggestionEvaluations    SuggestionEvaluation[] @relation("SuggestionEvaluator")
+  suggestionEvents         SuggestionEvent[]      @relation("SuggestionEventUser")
+  kaizensLed               Kaizen[]               @relation("KaizenLeader")
+  kaizensApproved          Kaizen[]               @relation("KaizenApprover")
+  kaizensCreated           Kaizen[]               @relation("KaizenCreator")
+  kaizenMemberships        KaizenMember[]         @relation("KaizenMemberUser")
+  kaizenGainsApproved      KaizenGain[]           @relation("KaizenGainFinanceApprover")
+  pointsLedger             PointsLedger[]         @relation("PointsLedgerUser")
+
+  // Audits
+  auditAreasResponsible AuditArea[]        @relation("AuditAreaResponsible")
+  auditPlansFixed       AuditPlan[]        @relation("AuditPlanFixedAuditor")
+  auditPlanAuditors     AuditPlanAuditor[] @relation("AuditPlanAuditorUser")
+  auditsPerformed       Audit[]            @relation("AuditAuditor")
+  tagsOpened            AbnormalityTag[]   @relation("TagOpenedBy")
+  tagsAssigned          AbnormalityTag[]   @relation("TagAssignedTo")
+
+  @@unique([tenantId, username])
+  @@index([tenantId])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum OrgUnitType {
+  COMPANY
+  SITE
+  DIRECTORATE
+  DEPARTMENT
+  UNIT
+  LINE
+  AREA
+}
+
+model OrgUnit {
+  id                String      @id @default(cuid())
+  tenantId          String
+  parentId          String?
+  /// Materialized path: /rootId/childId/.../thisId/
+  path              String
+  level             Int         @default(0)
+  type              OrgUnitType
+  name              String
+  code              String?
+  sortOrder         Int         @default(0)
+  isActive          Boolean     @default(true)
+  managerEmployeeId String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  tenant    Tenant          @relation(fields: [tenantId], references: [id])
+  parent    OrgUnit?        @relation("OrgTree", fields: [parentId], references: [id])
+  children  OrgUnit[]       @relation("OrgTree")
+  manager   Employee?       @relation("OrgUnitManager", fields: [managerEmployeeId], references: [id])
+  employees Employee[]      @relation("EmployeeOrgUnit")
+  userRoles UserRole[]
+  actions   Action[]
+  // KPI
+  kpis      KpiDefinition[]
+
+  // Audits
+  auditAreas     AuditArea[] @relation("AuditAreaOrgUnit")
+  auditEquipment Equipment[] @relation("EquipmentOrgUnit")
+
+  // Meetings
+  meetingTypes MeetingType[]
+  meetings     Meeting[]
+
+  // Problems
+  problems    Problem[]
+  // Strategy & Hoshin
+  hoshinGoals HoshinGoal[] @relation("HoshinGoalOrgUnit")
+  // Suggestions & Kaizen
+  suggestions Suggestion[]
+  kaizens     Kaizen[]
+
+  @@index([tenantId, path])
+  @@index([tenantId, parentId])
+}
+
+model Employee {
+  id         String    @id @default(cuid())
+  tenantId   String
+  employeeNo String
+  firstName  String
+  lastName   String
+  title      String?
+  email      String?
+  phone      String?
+  hireDate   DateTime? @db.Date
+  isActive   Boolean   @default(true)
+  orgUnitId  String?
+  managerId  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  orgUnit         OrgUnit?     @relation("EmployeeOrgUnit", fields: [orgUnitId], references: [id])
+  manager         Employee?    @relation("EmployeeManager", fields: [managerId], references: [id])
+  reports         Employee[]   @relation("EmployeeManager")
+  user            User?
+  managedOrgUnits OrgUnit[]    @relation("OrgUnitManager")
+  teamMemberships TeamMember[]
+
+  @@unique([tenantId, employeeNo])
+  @@index([tenantId, orgUnitId])
+}
+
+enum TeamType {
+  COMMITTEE
+  KAIZEN_TEAM
+  FIVE_S_TEAM
+  HOSHIN_TEAM
+  OTHER
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  type        TeamType @default(OTHER)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members TeamMember[]
+
+  @@index([tenantId])
+}
+
+model TeamMember {
+  id         String  @id @default(cuid())
+  tenantId   String
+  teamId     String
+  employeeId String
+  role       String?
+
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, employeeId])
+  @@index([tenantId])
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  tenantId    String
+  code        String
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  permissions String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userRoles UserRole[]
+
+  @@unique([tenantId, code])
+}
+
+model UserRole {
+  id        String  @id @default(cuid())
+  tenantId  String
+  userId    String
+  roleId    String
+  /// Boşsa tüm şirket; doluysa bu birim ve alt birimleri
+  orgUnitId String?
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  orgUnit OrgUnit? @relation(fields: [orgUnitId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+}
+
+// ---------- Ortak servisler ----------
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String?
+  entity    String
+  entityId  String
+  action    String
+  diff      Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([tenantId, entity, entityId])
+  @@index([tenantId, createdAt])
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  tenantId     String
+  entityType   String
+  entityId     String
+  fileName     String
+  mimeType     String
+  size         Int
+  storageKey   String
+  uploadedById String
+  createdAt    DateTime @default(now())
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@index([tenantId, entityType, entityId])
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  tenantId    String
+  userId      String
+  type        String
+  title       String
+  body        String?
+  link        String?
+  /// Aynı bildirimin tekrar gönderilmesini engellemek için anahtar (ör. ACTION_OVERDUE:<id>:<tarih>)
+  dedupeKey   String?
+  readAt      DateTime?
+  emailSentAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, dedupeKey])
+  @@index([tenantId, userId, readAt])
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  tenantId    String
+  name        String
+  prefix      String    @unique
+  keyHash     String
+  permissions String[]
+  expiresAt   DateTime?
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  createdById String
+  createdAt   DateTime  @default(now())
+
+  @@index([tenantId])
+}
+
+enum ImportStatus {
+  UPLOADED
+  COMMITTED
+  FAILED
+}
+
+model ImportJob {
+  id          String       @id @default(cuid())
+  tenantId    String
+  type        String
+  fileName    String
+  status      ImportStatus @default(UPLOADED)
+  headers     String[]
+  rows        Json
+  totalRows   Int          @default(0)
+  successRows Int          @default(0)
+  errorRows   Int          @default(0)
+  errors      Json?
+  createdById String
+  createdAt   DateTime     @default(now())
+  committedAt DateTime?
+
+  @@index([tenantId, createdAt])
+}
+
+/// Şirket bazlı sıra numaraları (aksiyon no, DÖF no vb.)
+model Sequence {
+  tenantId String
+  name     String
+  value    Int    @default(0)
+
+  @@id([tenantId, name])
+}
+
+/// Dosya içeriği (STORAGE_DRIVER=db). Kalıcı diski olmayan sunucusuz ortamlar (Vercel) için.
+model StoredFile {
+  key       String   @id
+  data      Bytes
+  size      Int
+  createdAt DateTime @default(now())
+}

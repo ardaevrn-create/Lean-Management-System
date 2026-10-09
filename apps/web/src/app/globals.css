@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: var(--brand, #4f46e5);
+  --color-brand-700: color-mix(in srgb, var(--brand, #4f46e5) 85%, black);
+  --color-brand-800: color-mix(in srgb, var(--brand, #4f46e5) 70%, black);
+  --color-brand-900: #312e81;
+}
+
+html, body { height: 100%; }
+body { @apply bg-slate-50 text-slate-800 antialiased; }
+
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes dialog-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+.animate-toast-in { animation: toast-in .18s ease-out; }
+.animate-dialog-in { animation: dialog-in .15s ease-out; }

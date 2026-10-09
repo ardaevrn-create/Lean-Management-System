@@ -1,0 +1,262 @@
+{
+  "title": "Strategy & Hoshin",
+  "subtitle": "Strategic plan, goal deployment (Hoshin Kanri), X-Matrix, bowling chart and catchball",
+  "autoCode": "Auto if empty",
+  "confirmDelete": "This record will be deleted. Are you sure?",
+  "tabs": {
+    "plan": "Strategic Plan",
+    "tree": "Goal Tree",
+    "xmatrix": "X-Matrix",
+    "bowling": "Bowling Chart",
+    "catchball": "Catchball",
+    "review": "Annual Review"
+  },
+  "plan": {
+    "select": "Select plan",
+    "create": "New plan",
+    "edit": "Edit plan",
+    "defaultName": "Strategic Plan",
+    "startYear": "Start year",
+    "endYear": "End year",
+    "vision": "Vision",
+    "mission": "Mission",
+    "values": "Values",
+    "valuesHint": "One value per line",
+    "activate": "Approve & activate",
+    "activated": "Plan activated (previous active plan archived)",
+    "newVersion": "New version",
+    "versionCreated": "New version created as draft",
+    "approvedBy": "Approved by {name} ({date})",
+    "none": "No strategic plan yet",
+    "noneDesc": "Create a plan first to use Strategy & Hoshin.",
+    "noAccess": "You do not have permission to view the strategic plan.",
+    "status": {
+      "DRAFT": "Draft",
+      "ACTIVE": "Active",
+      "ARCHIVED": "Archived"
+    }
+  },
+  "swot": {
+    "title": "SWOT Analysis",
+    "empty": "No items",
+    "item": "SWOT item",
+    "impact": "Impact / importance (1–5)",
+    "STRENGTH": "Strengths",
+    "WEAKNESS": "Weaknesses",
+    "OPPORTUNITY": "Opportunities",
+    "THREAT": "Threats"
+  },
+  "objectives": {
+    "title": "Strategic Objectives",
+    "add": "Add objective",
+    "item": "Strategic objective",
+    "perspective": "Perspective (BSC)",
+    "empty": "No objectives in this perspective",
+    "goalCount": "{n} goals"
+  },
+  "perspective": {
+    "FINANCIAL": "Financial",
+    "CUSTOMER": "Customer",
+    "INTERNAL_PROCESS": "Internal processes",
+    "LEARNING_GROWTH": "Learning & growth",
+    "NONE": "No perspective"
+  },
+  "level": {
+    "BREAKTHROUGH": "Breakthrough",
+    "ANNUAL": "Annual goal",
+    "PRIORITY": "Priority / project",
+    "DEPARTMENT": "Department goal",
+    "INDIVIDUAL": "Individual goal"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "PROPOSED": "Proposed",
+    "IN_CATCHBALL": "In catchball",
+    "AGREED": "Agreed",
+    "ACTIVE": "Active",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "color": {
+    "GREEN": "On target",
+    "YELLOW": "Warning",
+    "RED": "Off target",
+    "NO_DATA": "No data"
+  },
+  "direction": {
+    "HIGHER_BETTER": "Higher is better",
+    "LOWER_BETTER": "Lower is better"
+  },
+  "aggregation": {
+    "SUM": "Sum",
+    "AVERAGE": "Average",
+    "LAST": "Last value",
+    "MIN": "Minimum",
+    "MAX": "Maximum"
+  },
+  "source": {
+    "KPI": "KPI data",
+    "MANUAL": "Manual tracking",
+    "ROLLUP": "Rolled up from children",
+    "NONE": "Not measured"
+  },
+  "strength": {
+    "STRONG": "Strong",
+    "MEDIUM": "Medium",
+    "WEAK": "Weak"
+  },
+  "role": {
+    "RESPONSIBLE": "Responsible",
+    "SUPPORT": "Support"
+  },
+  "roleShort": {
+    "RESPONSIBLE": "R",
+    "SUPPORT": "S"
+  },
+  "months": {
+    "01": "Jan",
+    "02": "Feb",
+    "03": "Mar",
+    "04": "Apr",
+    "05": "May",
+    "06": "Jun",
+    "07": "Jul",
+    "08": "Aug",
+    "09": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec"
+  },
+  "field": {
+    "title": "Title",
+    "level": "Level",
+    "year": "Year",
+    "targetYear": "Target year",
+    "objective": "Strategic objective",
+    "owner": "Owner",
+    "orgUnit": "Org unit",
+    "kpi": "Measured by KPI",
+    "noKpi": "No KPI (manual tracking)",
+    "kpiHint": "Plan = KPI target, actual = KPI value. Direction, unit and aggregation come from the KPI.",
+    "baseline": "Baseline",
+    "target": "Target value",
+    "unit": "Unit",
+    "weight": "Weight",
+    "direction": "Direction",
+    "aggregation": "In-year aggregation",
+    "aggregationHint": "For the YTD calculation (sum / average / last)",
+    "startDate": "Start date",
+    "endDate": "End date"
+  },
+  "goal": {
+    "add": "Add goal",
+    "addChild": "Add goal under {code}",
+    "addChildShort": "Child goal",
+    "edit": "Edit goal",
+    "startCatchball": "Start catchball (propose to owner)",
+    "startCatchballHint": "A proposal is sent to the owner; the goal is activated after counter-proposal / agreement.",
+    "notFound": "Goal not found or no access",
+    "complete": "Complete",
+    "cancel": "Cancel goal",
+    "cancelConfirm": "The goal will be cancelled. Are you sure?",
+    "source": "Measurement source",
+    "bowling": "Bowling",
+    "children": "Child goals",
+    "noChildren": "No child goals",
+    "catchball": "Catchball",
+    "actions": "Actions",
+    "addAction": "Add action"
+  },
+  "tree": {
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
+    "empty": "No goals for this year",
+    "emptyDesc": "Add breakthrough and annual goals to build the goal tree.",
+    "manual": "Manual",
+    "unitSummary": "Department summary (department goals)"
+  },
+  "xmatrix": {
+    "north": "Priorities",
+    "south": "Breakthrough goals",
+    "west": "Annual goals",
+    "east": "Metrics (KPI)",
+    "print": "Print",
+    "clickHint": "Click a cell to change the correlation",
+    "empty": "No goals for the X-Matrix",
+    "emptyDesc": "Add breakthrough goals, annual goals and priorities for the selected year."
+  },
+  "bowling": {
+    "goal": "Goal",
+    "plan": "Plan",
+    "actual": "Actual",
+    "ytd": "YTD",
+    "achievement": "Achievement",
+    "editActuals": "Edit monthly values",
+    "measuredOnly": "Measured goals only",
+    "hint": "Cell: plan on top, actual below. Click a red/yellow month to see the explanation and countermeasures.",
+    "empty": "No goals to show"
+  },
+  "offTarget": {
+    "kpiDeviation": "KPI deviation explanation",
+    "rootCause": "Root cause",
+    "openKpi": "Open KPI deviations",
+    "noDeviation": "No KPI deviation explanation for this month.",
+    "explanation": "Off-target explanation",
+    "explanationHint": "Why is the actual below target?",
+    "actions": "Countermeasure actions",
+    "noActions": "No actions",
+    "addCountermeasure": "Add countermeasure action",
+    "actionTitle": "Action",
+    "dueDate": "Due date",
+    "priority": "Priority",
+    "createAction": "Create action",
+    "created": "Action created"
+  },
+  "catchball": {
+    "list": "Goals in catchball",
+    "empty": "No goals in catchball",
+    "emptyDesc": "Goals proposed to you or by you appear here.",
+    "awaitingMe": "Awaiting you",
+    "noEntries": "No entries yet",
+    "proposedTarget": "Proposed target",
+    "message": "Message",
+    "propose": "Propose",
+    "comment": "Comment",
+    "counter": "Counter-propose",
+    "reject": "Reject",
+    "agree": "Agree",
+    "activate": "Activate",
+    "activated": "Goal activated",
+    "agreedInfo": "Agreement reached; target value {target}. Awaiting activation.",
+    "type": {
+      "PROPOSAL": "Proposal",
+      "COMMENT": "Comment",
+      "COUNTER_PROPOSAL": "Counter-proposal",
+      "AGREEMENT": "Agreement",
+      "REJECTION": "Rejection"
+    },
+    "side": {
+      "PARENT": "Parent side",
+      "CHILD": "Assignee side"
+    }
+  },
+  "review": {
+    "title": "{year} Hoshin Annual Review",
+    "goals": "Goals",
+    "avgAchievement": "Avg. achievement",
+    "openActions": "Open actions",
+    "overdueActions": "Overdue actions",
+    "ytdPlan": "YTD plan",
+    "ytdActual": "YTD actual",
+    "agreedAt": "Agreement date",
+    "printView": "Print view",
+    "empty": "No goals to review"
+  },
+  "widget": {
+    "title": "My Hoshin goals",
+    "myGoals": "My goals",
+    "redGoals": "Off target",
+    "catchballPending": "Awaiting reply",
+    "waiting": "{n} catchball awaiting you"
+  }
+}
