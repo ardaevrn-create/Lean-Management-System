@@ -116,6 +116,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@lean/api':
+        specifier: workspace:*
+        version: link:../api
       '@lean/shared':
         specifier: workspace:*
         version: link:../../packages/shared

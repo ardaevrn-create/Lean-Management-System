@@ -22,7 +22,7 @@
 - Her değişiklikte denetim izi: `AuditService.log(...)`.
 
 ## Yayın (Vercel)
-- İki Vercel projesi: `apps/api` (NestJS, `api/index.js` fonksiyonu + `src/serverless.ts`, Neon Postgres) ve `apps/web` (Next.js, `/api/v1` → `API_ORIGIN` rewrite). Rehber: `docs/05-yayina-alma.md`.
+- Tek Vercel projesi (Root Directory `apps/web`): NestJS API'si `apps/web/src/pages/api/v1/[...path].ts` içinde `@lean/api/serverless` ile çalışır; derleme `scripts/vercel-build.sh` (migration + demo seed + api/web build). Neon Postgres. `API_ORIGIN` verilirse ayrı API sunucusuna aktarılır. Rehber: `docs/05-yayina-alma.md`.
 - Prisma Rust'sız istemci (`engineType = "client"` + `@prisma/adapter-pg`); WASM dosyası `src/serverless.ts` içindeki ipucu ile pakete girer, silmeyin.
 - Vercel'de `STORAGE_DRIVER=db`, `SCHEDULER_ENABLED=false`; hatırlatmalar Vercel Cron → `/api/v1/internal/cron/daily`.
 

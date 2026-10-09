@@ -20,7 +20,7 @@ import { GainsTable } from "@/components/suggestions/gains-table";
 import { KaizenFormDialog } from "@/components/suggestions/kaizen-form-dialog";
 
 export default function KaizenDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const { user } = useAuth();
   const toast = useToast();

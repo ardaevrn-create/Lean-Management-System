@@ -23,7 +23,7 @@ const PRINT_CSS = `
 `;
 
 export default function AuditPrintPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const { data: audit, isLoading } = useQuery({ queryKey: ["audits", "detail", id], queryFn: () => api.get<AuditDetail>(`/audits/${id}`) });
   const { data: actions } = useQuery({ queryKey: ["audits", "actions", id], queryFn: () => api.get<ActionListItem[]>(`/audits/${id}/actions`) });

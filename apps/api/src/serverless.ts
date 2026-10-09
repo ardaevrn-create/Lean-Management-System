@@ -7,7 +7,13 @@ import { setupApp } from './setup-app';
 
 // Vercel dosya izleyicisi (nft) için ipucu: Rust'sız Prisma istemcisinin çalışma anında okuduğu
 // WASM dosyası koddan statik olarak gerekmez; bu yol ifadesi dosyanın fonksiyon paketine girmesini sağlar.
-export const PRISMA_QUERY_COMPILER = join(dirname(require.resolve('@prisma/client')), '../../.prisma/client/query_compiler_bg.wasm');
+// Paketleyiciler (ör. Turbopack) require.resolve'u modül numarasına çevirebilir; bu durumda ipucu yok sayılır.
+export function prismaQueryCompilerPath(): string | undefined {
+  const resolved: unknown = require.resolve('@prisma/client');
+  return typeof resolved === 'string'
+    ? join(dirname(require.resolve('@prisma/client')), '../../.prisma/client/query_compiler_bg.wasm')
+    : undefined;
+}
 
 type Handler = (req: IncomingMessage, res: ServerResponse) => void;
 

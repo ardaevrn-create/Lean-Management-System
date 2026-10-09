@@ -37,7 +37,7 @@ function ProblemsInner() {
   const { t, locale } = useI18n();
   const toast = useToast();
   const router = useRouter();
-  const sp = useSearchParams();
+  const sp = useSearchParams() ?? new URLSearchParams();
   const { hasPermission } = useAuth();
   const canViewAll = hasPermission(PERMISSIONS.PROBLEM_VIEW) || hasPermission(PERMISSIONS.PROBLEM_MANAGE);
   const [tab, setTab] = useState<Tab>("list");

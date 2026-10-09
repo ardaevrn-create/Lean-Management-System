@@ -33,7 +33,7 @@ function Info({ label, children }: { label: string; children: React.ReactNode })
 }
 
 export default function KpiDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const [range, setRange] = useState<"last12" | "thisYear" | "lastYear">("last12");
   const [editing, setEditing] = useState(false);

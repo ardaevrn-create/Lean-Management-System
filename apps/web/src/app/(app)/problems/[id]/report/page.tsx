@@ -43,7 +43,7 @@ function KV({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default function ProblemReportPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const { data, isLoading } = useQuery({ queryKey: ["problems", "report", id], queryFn: () => api.get<ProblemReport>(`/problems/${id}/report`) });
   if (isLoading || !data) return <LoadingBlock />;

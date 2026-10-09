@@ -29,7 +29,7 @@ function Info({ label, children }: { label: string; children: React.ReactNode })
 }
 
 export default function HoshinGoalPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const router = useRouter();
   const { t, locale } = useI18n();
   const toast = useToast();

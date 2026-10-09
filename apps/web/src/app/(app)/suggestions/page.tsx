@@ -20,7 +20,7 @@ type Tab = "mine" | "evaluation" | "all" | "kaizen" | "library" | "leaderboard" 
 function SuggestionsPage() {
   const t = useT();
   const router = useRouter();
-  const params = useSearchParams();
+  const params = useSearchParams() ?? new URLSearchParams();
   const { hasPermission } = useAuth();
   const canEvaluate = hasPermission(PERMISSIONS.SUGGESTION_EVALUATE) || hasPermission(PERMISSIONS.SUGGESTION_MANAGE);
   const canManage = hasPermission(PERMISSIONS.SUGGESTION_MANAGE);

@@ -41,7 +41,7 @@ function PhotoBlock({ type, id, label, tone }: { type: string; id: string; label
 }
 
 export default function KaizenPrintPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const { data: k, isLoading } = useQuery({ queryKey: sKey("kaizen", id), queryFn: () => api.get<KaizenDetail>(`/suggestions/kaizen/${id}`) });
   const { data: tenant } = useQuery({ queryKey: ["tenant"], queryFn: () => api.get<TenantInfo>("/tenant"), staleTime: 5 * 60_000 });

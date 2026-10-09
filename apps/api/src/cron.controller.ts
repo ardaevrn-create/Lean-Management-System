@@ -28,20 +28,22 @@ export class CronController {
   @Get('daily')
   async daily(@Headers('authorization') authorization?: string) {
     if (!config.cronSecret || authorization !== `Bearer ${config.cronSecret}`) throw new UnauthorizedException();
-    const jobs: (new (...args: never[]) => Job)[] = [
-      ActionsReminderJob, KpiReminderJob, MeetingsReminderJob, ProblemsReminderJob, AuditsReminderJob, SuggestionsReminderJob,
+    // Etiketler açıkça verilir: paketleyiciler sınıf adlarını kısaltabilir
+    const jobs: [string, new (...args: never[]) => Job][] = [
+      ['actions', ActionsReminderJob], ['kpi', KpiReminderJob], ['meetings', MeetingsReminderJob],
+      ['problems', ProblemsReminderJob], ['audits', AuditsReminderJob], ['suggestions', SuggestionsReminderJob],
     ];
     // Hoshin hatırlatması ayda bir (ayın 3'ü)
-    if (new Date().getUTCDate() === 3) jobs.push(HoshinReminderJob);
+    if (new Date().getUTCDate() === 3) jobs.push(['hoshin', HoshinReminderJob]);
 
     const results: Record<string, string> = {};
-    for (const type of jobs) {
+    for (const [label, type] of jobs) {
       try {
         await this.moduleRef.get(type, { strict: false }).runAll();
-        results[type.name] = 'ok';
+        results[label] = 'ok';
       } catch (err) {
-        this.logger.error(`${type.name} failed`, err as Error);
-        results[type.name] = 'error';
+        this.logger.error(`Cron job ${label} failed`, err as Error);
+        results[label] = 'error';
       }
     }
     return results;

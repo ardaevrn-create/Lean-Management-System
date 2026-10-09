@@ -19,7 +19,7 @@ type TabKey = "DEFINITION" | "CONTAINMENT" | "ROOT_CAUSE" | "ACTIONS" | "VERIFIC
 const tabFor = (p: ProblemPhase): TabKey => (p === "CLOSED" ? "VERIFICATION" : p === "CANCELLED" ? "HISTORY" : p);
 
 export default function ProblemDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const { data: problem, isLoading, error } = useProblem(id);
   const [tab, setTab] = useState<TabKey | null>(null);

@@ -1,17 +1,23 @@
 import type { NextConfig } from "next";
 
-// Yayında web ve API ayrı sunuculardadır (ör. Vercel + Railway). API_ORIGIN verilirse
-// tarayıcı /api/v1 isteklerini aynı adrese yapar, Next bunları API'ye aktarır (CORS gerekmez).
+// Tarayıcı API'ye her zaman aynı adresten (/api/v1) gider.
+// - Varsayılan (tek Vercel projesi): NestJS API'si src/pages/api/v1/[...path].ts içinde aynı projede çalışır.
+// - API_ORIGIN verilirse istekler ayrı bir API sunucusuna aktarılır (ör. Docker/Railway).
 const apiOrigin = process.env.API_ORIGIN?.replace(/\/$/, "");
-if (!apiOrigin && process.env.VERCEL) {
-  console.warn("[lean] API_ORIGIN tanımlı değil: /api/v1 istekleri API'ye aktarılamaz, giriş çalışmaz.");
-}
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@lean/shared"],
+  // API paketi derlenmiş haliyle (Nest dekoratör metadatası korunarak) çalışma anında yüklenir
+  serverExternalPackages: ["@lean/api"],
   reactStrictMode: true,
+  // Sunucu kodunu küçültme: Nest hata kayıtlarında sınıf adları okunur kalsın
+  experimental: { serverMinification: false },
   async rewrites() {
-    return apiOrigin ? [{ source: "/api/v1/:path*", destination: `${apiOrigin}/api/v1/:path*` }] : [];
+    return {
+      beforeFiles: apiOrigin ? [{ source: "/api/v1/:path*", destination: `${apiOrigin}/api/v1/:path*` }] : [],
+      afterFiles: [],
+      fallback: [],
+    };
   },
 };
 

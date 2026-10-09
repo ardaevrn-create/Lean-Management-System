@@ -20,7 +20,7 @@ import {
 
 /** Toplantı odası: canlı toplantı yürütme (katılım, gündem notları, kararlar, aksiyonlar). */
 export default function MeetingRoomPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const toast = useToast();
   const qc = useQueryClient();

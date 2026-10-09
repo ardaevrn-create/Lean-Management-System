@@ -71,7 +71,7 @@ function AssignDialog({ s, open, onClose, onDone }: { s: SuggestionDetail; open:
 }
 
 export default function SuggestionDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const router = useRouter();
   const { t, locale } = useI18n();
   const toast = useToast();

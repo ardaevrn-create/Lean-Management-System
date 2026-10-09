@@ -24,7 +24,7 @@ export function Sidebar({
   onMobileClose: () => void;
 }) {
   const t = useT();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const { hasPermission } = useAuth();
 
   const groups = NAV.map((g) => ({ ...g, items: g.items.filter((i) => !i.permission || hasPermission(i.permission)) })).filter(

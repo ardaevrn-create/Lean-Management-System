@@ -33,7 +33,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function MeetingPrintPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = (useParams<{ id: string }>() as { id: string });
   const { t, locale } = useI18n();
   const tz = useTenantTz();
   const { data: m, isLoading } = useQuery({ queryKey: ["meetings", "detail", id], queryFn: () => api.get<MeetingDetail>(`/meetings/${id}`) });
