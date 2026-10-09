@@ -1,7 +1,11 @@
 /** Tüm API çağrıları bu istemci üzerinden yapılır (token ekleme, 401'de refresh). */
 import type { TokenPair } from "@lean/shared";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+// Yayında web ve API aynı adres üzerinden konuşur (Next.js /api/v1 → API_ORIGIN aktarımı).
+// Yerel geliştirmede API ayrı portta çalışır.
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  (process.env.NODE_ENV === "production" ? "/api/v1" : "http://localhost:4000/api/v1");
 
 const ACCESS_KEY = "lean.accessToken";
 const REFRESH_KEY = "lean.refreshToken";

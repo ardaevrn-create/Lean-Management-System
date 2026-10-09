@@ -24,6 +24,8 @@ import { seedStrategy } from './seed-strategy';
 import { seedSuggestions } from './seed-suggestions';
 
 const DEMO_PASSWORD = 'Demo1234!';
+/** Demo yönetici şifresi (DEMO_ADMIN_PASSWORD ile değiştirilebilir) */
+const ADMIN_PASSWORD = process.env.DEMO_ADMIN_PASSWORD || 'admin123';
 
 async function main() {
   process.env.SCHEDULER_ENABLED = 'false';
@@ -32,13 +34,19 @@ async function main() {
   const ctx = app.get(RequestContext);
 
   if (await prisma.raw.tenant.findUnique({ where: { code: 'DEMO' } })) {
-    console.log('DEMO şirketi zaten var, seed atlandı.');
+    // Mevcut demoda yönetici şifresini güncel demo şifresine eşitle (yeniden dağıtımda geçerli olur)
+    const demo = await prisma.raw.tenant.findUniqueOrThrow({ where: { code: 'DEMO' } });
+    await prisma.raw.user.updateMany({
+      where: { tenantId: demo.id, username: 'admin' },
+      data: { passwordHash: await hashPassword(ADMIN_PASSWORD), mustChangePassword: false, isActive: true },
+    });
+    console.log(`DEMO şirketi zaten var, seed atlandı. Yönetici şifresi: admin / ${ADMIN_PASSWORD}`);
     await app.close();
     return;
   }
 
   const { tenant, admin } = await app.get(TenantProvisioningService).provision({
-    code: 'DEMO', name: 'Demo Üretim A.Ş.', adminUsername: 'admin', adminPassword: 'Admin123!',
+    code: 'DEMO', name: 'Demo Üretim A.Ş.', adminUsername: 'admin', adminPassword: ADMIN_PASSWORD,
     adminFullName: 'Sistem Yöneticisi', adminEmail: 'admin@demo.local', isPlatformAdmin: true,
   });
 
@@ -126,7 +134,7 @@ async function main() {
 
   console.log('Seed tamamlandı.');
   console.log('  Şirket kodu: DEMO');
-  console.log('  Yönetici   : admin / Admin123!');
+  console.log(`  Yönetici   : admin / ${ADMIN_PASSWORD}`);
   console.log(`  Personel   : sicil no (ör. 1002, 2001, 3001) / ${DEMO_PASSWORD}`);
   await app.close();
 }

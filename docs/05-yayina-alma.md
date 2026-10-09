@@ -40,7 +40,7 @@ Pull request'i birleştirin. Vercel `main` dalından kurar.
 3. **Deployments → son kurulum → ⋯ → Redeploy** (değişkenler derleme sırasında okunur).
 
 ## Giriş
-Şirket kodu `DEMO`, `admin` / `Admin123!`; personel kullanıcı adı sicil no (1001…4001), şifre `Demo1234!`.
+Şirket kodu `DEMO`, `admin` / `admin123`; personel kullanıcı adı sicil no (1001…4001), şifre `Demo1234!`.
 
 ## Vercel'e özgü notlar
 - **Hatırlatmalar:** `apps/api/vercel.json` içindeki cron her gün 04:00 UTC'de (07:00 İstanbul) `/api/v1/internal/cron/daily` uç noktasını çağırır. Hobby planda günde bir cron yeterlidir.

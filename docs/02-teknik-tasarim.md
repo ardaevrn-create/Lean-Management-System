@@ -154,7 +154,7 @@ docker compose up -d          # postgres + redis
 pnpm install
 cp apps/api/.env.example apps/api/.env
 pnpm --filter @lean/api exec prisma migrate deploy
-pnpm --filter @lean/api seed  # demo şirket: kod DEMO, kullanıcı admin / Admin123!
+pnpm --filter @lean/api seed  # demo şirket: kod DEMO, kullanıcı admin / admin123
 pnpm dev                      # api :4000 (Swagger: /api/docs), web :3000
 pnpm --filter @lean/api test:e2e   # lean_test veritabanı gerekir
 ```

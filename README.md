@@ -32,7 +32,7 @@ pnpm --filter @lean/api seed
 pnpm dev
 ```
 
-Web: http://localhost:3000. Giriş bilgileri: şirket kodu `DEMO`, yönetici `admin` / `Admin123!`. Demo personel hesaplarında kullanıcı adı sicil numarasıdır (ör. `2001`), şifre `Demo1234!`.
+Web: http://localhost:3000. Giriş bilgileri: şirket kodu `DEMO`, yönetici `admin` / `admin123`. Demo personel hesaplarında kullanıcı adı sicil numarasıdır (ör. `2001`), şifre `Demo1234!`.
 
 ## Testler
 

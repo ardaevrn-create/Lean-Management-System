@@ -37,7 +37,7 @@ pnpm typecheck && pnpm --filter @lean/web lint
 pnpm --filter @lean/api test                          # birim
 pnpm --filter @lean/api test:e2e                      # uçtan uca; lean_test veritabanı gerekir (TEST_DATABASE_URL)
 ```
-Demo girişi: şirket `DEMO`, `admin` / `Admin123!`; personel kullanıcı adı = sicil no (1001…4001), şifre `Demo1234!`.
+Demo girişi: şirket `DEMO`, `admin` / `admin123`; personel kullanıcı adı = sicil no (1001…4001), şifre `Demo1234!`.
 
 ## Kalınan yer (06.10.2026)
 Faz 0–3 tamam: 8 modülün hepsi çalışıyor, 107 birim + 84 e2e test geçiyor. Kullanıcıya sorulan ve **cevap bekleyen** kararlar:
